@@ -1,0 +1,95 @@
+name: Autograding Tests
+'on':
+- push
+- repository_dispatch
+permissions:
+  checks: write
+  actions: read
+  contents: read
+jobs:
+  run-autograding-tests:
+    runs-on: ubuntu-latest
+    if: github.actor != 'github-classroom[bot]'
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.13'
+
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+        pip install -e .
+
+    - name: Core tests
+      id: core-tests
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Core tests
+        setup-command: ''
+        command: pytest tests/test_tools.py tests/test_tool_graph.py tests/test_retriever.py -v
+        timeout: 60
+        max-score: 20
+
+    - name: Documentation complete
+      id: documentation-complete
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Documentation complete
+        setup-command: ''
+        command: python tests/verify_submission.py
+        timeout: 10
+        max-score: 40
+
+    - name: Custom prompt has required sections
+      id: custom-prompt-sections
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Custom prompt has required sections
+        setup-command: ''
+        command: |
+          python -c "
+          from pathlib import Path
+          prompt = Path('prompts/my_assistant.md').read_text()
+          assert '# Persona' in prompt, 'Missing # Persona section'
+          assert '# Task' in prompt, 'Missing # Task section'
+          assert '# Citations' in prompt, 'Missing # Citations section'
+          assert len(prompt) >= 300, f'Prompt too short ({len(prompt)} chars, need 300)'
+          print('Custom prompt has all required sections')
+          "
+        timeout: 10
+        max-score: 20
+
+    - name: Experiment prompts exist
+      id: experiment-prompts
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Experiment prompts exist
+        setup-command: ''
+        command: |
+          python -c "
+          from pathlib import Path
+          generic = Path('prompts/generic_prompt.md')
+          specific = Path('prompts/specific_prompt.md')
+          assert generic.exists(), 'Missing prompts/generic_prompt.md'
+          assert specific.exists(), 'Missing prompts/specific_prompt.md'
+          assert len(generic.read_text()) >= 100, 'generic_prompt.md too short'
+          assert len(specific.read_text()) >= 150, 'specific_prompt.md too short'
+          print('Experiment prompts exist and have content')
+          "
+        timeout: 10
+        max-score: 20
+
+    - name: Autograding Reporter
+      uses: classroom-resources/autograding-grading-reporter@v1
+      env:
+        CORE-TESTS_RESULTS: "${{steps.core-tests.outputs.result}}"
+        DOCUMENTATION-COMPLETE_RESULTS: "${{steps.documentation-complete.outputs.result}}"
+        CUSTOM-PROMPT-SECTIONS_RESULTS: "${{steps.custom-prompt-sections.outputs.result}}"
+        EXPERIMENT-PROMPTS_RESULTS: "${{steps.experiment-prompts.outputs.result}}"
+      with:
+        runners: core-tests,documentation-complete,custom-prompt-sections,experiment-prompts
