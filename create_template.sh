@@ -9,15 +9,15 @@ echo "Creating clean template repository..."
 cd ..
 
 # Remove old template if exists
-if [ -d "a4-retrieval-kw-multiturn-template" ]; then
+if [ -d "a5-build-your-own-template" ]; then
     echo "Removing existing template directory..."
-    rm -rf a4-retrieval-kw-multiturn-template
+    rm -rf a5-build-your-own-template
 fi
 
 # Copy current repo to new directory
 echo "Copying files..."
-cp -r a4-retrieval-kw-multiturn-authoring a4-retrieval-kw-multiturn-template
-cd a4-retrieval-kw-multiturn-template
+cp -r a5-build-your-own a5-build-your-own-template
+cd a5-build-your-own-template
 
 # Remove git history
 echo "Removing git history..."
@@ -52,20 +52,20 @@ rm -f create_template.sh
 echo "Initializing fresh git repository..."
 git init
 git add .
-git commit -m "Initial template for A4 RAG + Multi-turn Chat assignment"
+git commit -m "Initial template for A5 Build Your Own assignment"
 
 echo ""
 echo "Template created successfully!"
 echo ""
 echo "Next steps:"
 echo "1. Go to https://github.com/new"
-echo "2. Create repo: ai-in-the-loop-2026/a4-retrieval-kw-multiturn-template"
+echo "2. Create repo: ai-in-the-loop-2026/a5-build-your-own-template"
 echo "3. Make it public"
 echo "4. DO NOT initialize with README (we already have one)"
 echo "5. Run these commands:"
 echo ""
-echo "   cd a4-retrieval-kw-multiturn-template"
-echo "   git remote add origin git@github.com:ai-in-the-loop-2026/a4-retrieval-kw-multiturn-template.git"
+echo "   cd a5-build-your-own-template"
+echo "   git remote add origin git@github.com:ai-in-the-loop-2026/a5-build-your-own-template.git"
 echo "   git branch -M main"
 echo "   git push -u origin main"
 echo ""

@@ -2,6 +2,9 @@
 
 Tests the full flow of the LangGraph application with tool calling,
 using MockChatModel to simulate LLM behavior without API calls.
+
+These tests are designed to be extension-tolerant: they validate that
+the core framework works while allowing students to add nodes/tools.
 """
 
 import pytest
@@ -28,6 +31,25 @@ def mock_config():
     )
 
 
+class TestGraphCompiles:
+    """Tests that the graph builds and runs without errors."""
+
+    def test_graph_builds_without_error(self, mock_config):
+        """Test that the graph compiles successfully."""
+        app = build_app(mock_config)
+        assert app is not None
+
+    def test_graph_accepts_message(self, mock_config):
+        """Test that the graph can process a basic message."""
+        app = build_app(mock_config)
+        result = app.invoke({"messages": [HumanMessage(content="Hello")]})
+
+        # Should have at least the input and one response
+        messages = result["messages"]
+        assert len(messages) >= 2
+        assert isinstance(messages[0], HumanMessage)
+
+
 class TestGraphWithToolCalls:
     """Tests for graph execution with tool calls."""
 
@@ -49,39 +71,35 @@ class TestGraphWithToolCalls:
         tool_result = tool_messages[0].content
         assert "8" in str(tool_result)
 
-    def test_non_math_prompt_no_tool_call(self, mock_config):
-        """Test that a non-math prompt doesn't trigger tool calls."""
+    def test_non_math_prompt_produces_response(self, mock_config):
+        """Test that a non-math prompt produces a response without errors."""
         app = build_app(mock_config)
         result = app.invoke({"messages": [HumanMessage(content="Hello, how are you?")]})
 
         messages = result["messages"]
 
-        # Should have exactly 2 messages: human and AI response
-        assert len(messages) == 2
+        # Should have at least 2 messages: human and some response
+        assert len(messages) >= 2
 
-        # No tool messages
-        tool_messages = [m for m in messages if isinstance(m, ToolMessage)]
-        assert len(tool_messages) == 0
-
-        # Final message should be the mock response
-        final_msg = messages[-1]
-        assert isinstance(final_msg, AIMessage)
-        assert "[MOCK]" in final_msg.content
+        # Should have at least one AI message in the response
+        ai_messages = [m for m in messages if isinstance(m, AIMessage)]
+        assert len(ai_messages) >= 1
 
     def test_run_once_with_math(self, mock_config):
         """Test run_once convenience function with math prompt."""
         result = run_once("What is 10 * 5?", mock_config)
 
-        # The result should contain the calculation result
-        # After tool execution, the mock returns a final response
+        # The result should be a string
         assert isinstance(result, str)
-        # The result might be the mock's interpretation or the tool result
+        # Should have some content
+        assert len(result) > 0
 
     def test_run_once_without_tools(self, mock_config):
         """Test run_once without triggering tools."""
         result = run_once("Hello world", mock_config)
 
         assert isinstance(result, str)
+        # With mock model, should contain [MOCK]
         assert "[MOCK]" in result
 
     def test_complex_math_expression(self, mock_config):
@@ -118,21 +136,8 @@ class TestGraphMessageFlow:
 
     def test_system_prompt_not_in_output(self, mock_config):
         """Test that system prompt doesn't appear in output messages."""
-        # Use a config with a system prompt
-        config_with_system = Config(
-            use_gemini=False,
-            gemini_api_key=None,
-            gemini_model="gemini-2.5-flash",
-            temperature=0.7,
-            thinking_level=None,
-            thinking_budget=0,
-            system_prompt_file="prompts/generic_prompt.md",
-            resources_dir="resources",
-            chunk_size=1000,
-            chunk_overlap=100,
-        )
-
-        app = build_app(config_with_system)
+        # Use empty prompt config (already set in mock_config)
+        app = build_app(mock_config)
         result = app.invoke({
             "messages": [HumanMessage(content="Hello")]
         })

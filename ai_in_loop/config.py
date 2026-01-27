@@ -66,8 +66,20 @@ class Config:
 
         # Retrieval configuration
         resources_dir = os.getenv("RESOURCES_DIR", "resources").strip()
-        chunk_size = int(os.getenv("CHUNK_SIZE", "1000").strip())
-        chunk_overlap = int(os.getenv("CHUNK_OVERLAP", "100").strip())
+
+        try:
+            chunk_size = int(os.getenv("CHUNK_SIZE", "1000").strip())
+            chunk_size = max(100, min(chunk_size, 10000))  # Bound to reasonable range
+        except ValueError:
+            print("Warning: CHUNK_SIZE is not a valid integer, using 1000", file=sys.stderr)
+            chunk_size = 1000
+
+        try:
+            chunk_overlap = int(os.getenv("CHUNK_OVERLAP", "100").strip())
+            chunk_overlap = max(0, min(chunk_overlap, chunk_size // 2))  # Can't exceed half of chunk_size
+        except ValueError:
+            print("Warning: CHUNK_OVERLAP is not a valid integer, using 100", file=sys.stderr)
+            chunk_overlap = 100
 
         return Config(
             use_gemini=use_gemini,

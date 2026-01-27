@@ -5,13 +5,11 @@ from pathlib import Path
 
 REQUIRED_FILES = [
     Path("docs/ai_dev_log.md"),
-    Path("docs/activity1_research.md"),
-    Path("docs/activity2_prompt_design.md"),
-    Path("docs/activity3_tool_decisions.md"),
-    Path("docs/activity4_reflection.md"),
-    Path("prompts/my_assistant.md"),
-    Path("prompts/generic_prompt.md"),
-    Path("prompts/specific_prompt.md"),
+    Path("docs/activity1_setup.md"),
+    Path("docs/activity2_extension.md"),
+    Path("docs/activity3_testing.md"),
+    Path("docs/activity4_demo.md"),
+    Path("prompts/application_prompt.md"),
 ]
 
 PLACEHOLDER_TOKENS = [
@@ -28,43 +26,40 @@ DEV_LOG_REQUIRED_FIELDS = [
     "**Result:**",
 ]
 
-# Required sections for activity1_research.md
+# Required sections for activity1_setup.md
 ACTIVITY1_SECTIONS = [
-    "## Research Topic",
-    "## Research Session Transcript",
-    "## Log File Evidence",
-    "## Analysis",
+    "## Part 1: Choose Your Application",
+    "## Part 2: Gather Your Documents",
+    "## Part 3: Initial System Prompt",
+    "## Part 4: Verification",
 ]
 
-# Required sections for activity2_prompt_design.md
+# Required sections for activity2_extension.md
 ACTIVITY2_SECTIONS = [
-    "## Your Custom Prompt",
-    "## Testing Your Prompt",
-    "## Comparison",
-    "## Final Prompt",
+    "## Part 1: Extension Choice",
+    "## Part 2: Design",
+    "## Part 3: Implementation",
+    "## Part 4: Safety Considerations",
 ]
 
-# Required sections for activity3_tool_decisions.md
+# Required sections for activity3_testing.md
 ACTIVITY3_SECTIONS = [
-    "## Experiment 1: Empty Prompt",
-    "## Experiment 2: Generic Prompt",
-    "## Experiment 3: Specific Prompt",
-    "## Results Summary",
-    "## Analysis",
-    "## Key Insight",
+    "## Part 1: Initial Testing",
+    "## Part 2: Prompt Iteration",
+    "## Part 3: Before/After Comparison",
+    "## Part 4: Tool Usage Analysis",
 ]
 
-# Required sections for activity4_reflection.md
+# Required sections for activity4_demo.md
 ACTIVITY4_SECTIONS = [
-    "## Memory: Multi-turn Conversation",
-    "## Grounding: RAG and Document Retrieval",
-    "## Shaping Behavior: Tools, Prompts, and Retrieval",
-    "## Looking Forward",
-    "## Course Arc Reflection",
+    "## Part 1: Demo Transcript",
+    "## Part 2: Extension Evidence",
+    "## Part 3: Design Reflection",
+    "## Part 4: Technical Reflection",
 ]
 
-# Required sections for my_assistant.md (student-created prompt)
-MY_ASSISTANT_SECTIONS = [
+# Required sections for application_prompt.md
+APPLICATION_PROMPT_SECTIONS = [
     "# Persona",
     "# Task",
     "# Citations",
@@ -73,13 +68,11 @@ MY_ASSISTANT_SECTIONS = [
 # Minimum content lengths per file
 MIN_LENGTHS = {
     "docs/ai_dev_log.md": 100,
-    "docs/activity1_research.md": 700,
-    "docs/activity2_prompt_design.md": 700,
-    "docs/activity3_tool_decisions.md": 800,
-    "docs/activity4_reflection.md": 400,
-    "prompts/my_assistant.md": 300,
-    "prompts/generic_prompt.md": 100,
-    "prompts/specific_prompt.md": 150,
+    "docs/activity1_setup.md": 600,
+    "docs/activity2_extension.md": 700,
+    "docs/activity3_testing.md": 800,
+    "docs/activity4_demo.md": 600,
+    "prompts/application_prompt.md": 300,
 }
 
 
@@ -124,6 +117,87 @@ def check_file(
     return problems
 
 
+def check_extension_exists() -> list[str]:
+    """Check that student added a node to graph.py OR a tool to tools.py.
+
+    Baseline has 2 nodes (agent, tools) and 2 tools (python_calc, search_docs).
+    Student must add at least one more of either.
+
+    Returns:
+        List of problems found (empty if extension exists)
+    """
+    import re
+
+    problems: list[str] = []
+
+    graph_path = Path("ai_in_loop/graph.py")
+    tools_path = Path("ai_in_loop/tools.py")
+
+    if not graph_path.exists():
+        problems.append("Missing ai_in_loop/graph.py")
+        return problems
+
+    if not tools_path.exists():
+        problems.append("Missing ai_in_loop/tools.py")
+        return problems
+
+    graph_code = graph_path.read_text(encoding="utf-8")
+    tools_code = tools_path.read_text(encoding="utf-8")
+
+    # Count nodes: look for graph.add_node( calls
+    node_count = graph_code.count("graph.add_node(")
+
+    # Count tools: look for @tool decorator at start of line (not in comments)
+    # Match lines that start with @tool (with optional whitespace)
+    tool_count = len(re.findall(r"^\s*@tool\s*$", tools_code, re.MULTILINE))
+
+    # Baseline: 2 nodes, 2 tools
+    # Student must add at least one of either
+    if node_count <= 2 and tool_count <= 2:
+        problems.append(
+            f"Extension required: Add a node to graph.py (currently {node_count}) "
+            f"OR a tool to tools.py (currently {tool_count}). "
+            f"You need more than 2 of at least one."
+        )
+
+    return problems
+
+
+def check_resources() -> list[str]:
+    """Check that resources/ has at least 5 documents (no Federalist Papers).
+
+    Returns:
+        List of problems found (empty if resources are valid)
+    """
+    problems: list[str] = []
+
+    resources_dir = Path("resources")
+    if not resources_dir.exists():
+        problems.append("Missing resources/ directory")
+        return problems
+
+    # Find all .txt and .pdf files
+    txt_files = list(resources_dir.glob("**/*.txt"))
+    pdf_files = list(resources_dir.glob("**/*.pdf"))
+    all_docs = txt_files + pdf_files
+
+    if len(all_docs) < 5:
+        problems.append(
+            f"Need at least 5 documents in resources/. Found {len(all_docs)}. "
+            f"Add .txt or .pdf files for your application."
+        )
+
+    # Check for Federalist Papers (they should be replaced)
+    federalist_docs = [d for d in all_docs if "federalist" in d.name.lower()]
+    if federalist_docs:
+        problems.append(
+            f"Found Federalist Papers in resources/: {[d.name for d in federalist_docs[:3]]}... "
+            f"Replace these with your own documents."
+        )
+
+    return problems
+
+
 def main() -> int:
     problems: list[str] = []
 
@@ -133,18 +207,24 @@ def main() -> int:
 
         if f.name == "ai_dev_log.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=DEV_LOG_REQUIRED_FIELDS))
-        elif f.name == "activity1_research.md":
+        elif f.name == "activity1_setup.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY1_SECTIONS))
-        elif f.name == "activity2_prompt_design.md":
+        elif f.name == "activity2_extension.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY2_SECTIONS))
-        elif f.name == "activity3_tool_decisions.md":
+        elif f.name == "activity3_testing.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY3_SECTIONS))
-        elif f.name == "activity4_reflection.md":
+        elif f.name == "activity4_demo.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY4_SECTIONS))
-        elif f.name == "my_assistant.md":
-            problems.extend(check_file(f, min_length=min_len, required_fields=MY_ASSISTANT_SECTIONS))
+        elif f.name == "application_prompt.md":
+            problems.extend(check_file(f, min_length=min_len, required_fields=APPLICATION_PROMPT_SECTIONS))
         else:
             problems.extend(check_file(f, min_length=min_len))
+
+    # Check for extension (node or tool added)
+    problems.extend(check_extension_exists())
+
+    # Check resources directory
+    problems.extend(check_resources())
 
     if problems:
         print("Submission Verification: PROBLEMS FOUND")

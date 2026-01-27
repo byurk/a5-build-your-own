@@ -1,6 +1,17 @@
-# AI-in-the-Loop - A4: RAG + Multi-turn Chat
+# AI-in-the-Loop - A5: Build Your Own
 
-This assignment introduces **Retrieval-Augmented Generation (RAG)** and **multi-turn conversation**. You'll explore how grounding an LLM in specific documents (the Federalist Papers) changes its responses, and how system prompts shape its behavior.
+In this assignment, you'll create your own AI-powered application by choosing a domain, providing your own documents, crafting system prompts, and extending the graph with new functionality.
+
+## What You'll Build
+
+You will:
+1. **Choose an application** - something interesting, useful, or entertaining
+2. **Provide your own documents** - at least 5 documents to serve as the knowledge base
+3. **Craft system prompts** - main prompt + any node-specific prompts
+4. **Extend the graph** - add a new node OR tool (or both)
+5. **Test and optimize** - iterate on prompts after building your extension
+
+---
 
 ## Recommended Python
 
@@ -35,7 +46,7 @@ pip install -e .
 1. Copy `.env.example` to `.env`
 2. Set `GEMINI_API_KEY=...` (from Google AI Studio)
 3. Set `USE_GEMINI=1`
-4. Leave `SYSTEM_PROMPT_FILE=prompts/empty.md` (Activity 1 uses the empty prompt)
+4. Set `SYSTEM_PROMPT_FILE=prompts/application_prompt.md`
 
 Never commit `.env`.
 
@@ -61,41 +72,155 @@ source .venv/bin/activate
 .\.venv\Scripts\Activate.ps1
 ```
 
-## What's New in A4
+---
 
-### Multi-turn Conversation
+## Assignment Activities
 
-The `chat` command now maintains conversation history across turns. The assistant remembers what you discussed earlier in the session, enabling:
-- Follow-up questions that reference previous answers
-- Building a research narrative across multiple exchanges
-- Clarification and refinement of earlier responses
+### Activity 1: Application Setup (docs/activity1_setup.md)
 
-### Document Retrieval (RAG)
+Choose your application, gather 5+ documents, and create your initial system prompt.
 
-The assistant has access to the **Federalist Papers** - 85 essays written by Hamilton, Madison, and Jay in 1787-1788. When you ask questions, it can search these documents using the `search_docs` tool:
+1. Decide on your application domain
+2. Add at least 5 documents to `resources/`
+3. Create your system prompt at `prompts/application_prompt.md`
+4. Verify that `search_docs` works with your documents
 
-```
-You: What does Madison say about factions?
-Tool call: search_docs(query="Madison factions")
-Tool result: Source: federalist_10.txt
-Content: AMONG the numerous advantages promised by a well-constructed Union...
-```
+### Activity 2: Extension (docs/activity2_extension.md)
 
-This grounds the assistant's responses in specific historical documents rather than relying solely on its training data.
+Add a new node OR tool to extend the system's capabilities.
 
-### System Prompts
+1. Design your extension (what problem does it solve?)
+2. Implement it in `graph.py` or `tools.py`
+3. Document the implementation and safety considerations
+4. Do a quick verification that it works
 
-You can customize the assistant's behavior by setting `SYSTEM_PROMPT_FILE` in your `.env` file:
+**Important:** Complete this BEFORE Activity 3's testing.
 
-```
-# Use the provided example prompt
-SYSTEM_PROMPT_FILE=prompts/generic_prompt.md
+### Activity 3: Testing & Optimization (docs/activity3_testing.md)
 
-# Or use your custom prompt (you'll create this in Activity 2)
-SYSTEM_PROMPT_FILE=prompts/my_assistant.md
-```
+Test the full system and iterate on your prompts.
 
-Then run: `python -m ai_in_loop.cli chat`
+1. Conduct 3+ test conversations
+2. Identify issues and iterate on prompts
+3. Document before/after comparisons
+4. Analyze tool usage patterns
+
+### Activity 4: Demonstration (docs/activity4_demo.md)
+
+Create a polished demonstration and reflect on your design.
+
+1. Provide a 3-5 turn demo transcript
+2. Show evidence your extension fired
+3. Reflect on design decisions
+4. Connect to earlier assignments
+
+### AI Dev Log Entry (docs/ai_dev_log.md)
+
+Add an entry documenting your work this week.
+
+---
+
+## Example Application Ideas
+
+### Easier (Node-focused)
+
+#### 1. Recipe Assistant
+- **Description:** Help users find and format recipes from a personal collection
+- **Extension:** `format_recipe` node that structures output (ingredients list, steps, timing)
+- **Documents:** Family recipes, cuisine blogs, cookbook excerpts (copy/paste to .txt)
+
+#### 2. Study Guide Generator
+- **Description:** Create study materials from course content
+- **Extension:** `generate_questions` node that produces quiz questions after retrieval
+- **Documents:** Your own course notes, lecture slides (as text), textbook summaries
+
+#### 3. Personal Writing Coach
+- **Description:** Get feedback on writing based on style guides
+- **Extension:** `style_check` postprocessing node that flags issues
+- **Documents:** Style guides (APA, Chicago), your own past essays for examples
+
+#### 4. Club/Organization FAQ Bot
+- **Description:** Answer questions about a club, team, or student org
+- **Extension:** `citation_formatter` node that standardizes source references
+- **Documents:** Bylaws, meeting minutes, event policies, member handbooks
+
+#### 5. Game Rules Reference
+- **Description:** Answer questions about board game or video game rules
+- **Extension:** `clarify_rule` node that identifies ambiguous rules and asks for context
+- **Documents:** Rulebooks, FAQ pages, strategy guides (copy to .txt)
+
+### Moderate (Node or Simple Tool)
+
+#### 6. Code Documentation Helper
+- **Description:** Help understand a codebase from its documentation
+- **Extension:** `format_code` tool that wraps code snippets in proper markdown
+- **Documents:** README files, API docs, code comments extracted to text
+
+#### 7. Research Summary Assistant
+- **Description:** Summarize and compare academic papers in a field
+- **Extension:** `extract_sections` node that identifies abstract, methods, results
+- **Documents:** Academic papers (PDF supported), literature review notes
+
+#### 8. Local Resource Guide
+- **Description:** Answer questions about campus or local community resources
+- **Extension:** `categorize_response` node that tags answers by type (food, health, etc.)
+- **Documents:** Campus guides, local business info, community resource lists
+
+### More Challenging (Tool with Safety Considerations)
+
+#### 9. Language Learning Helper
+- **Description:** Help learn vocabulary and grammar for a specific language
+- **Extension:** `conjugate_verb` tool (for a language with regular conjugation rules)
+- **Documents:** Grammar guides, vocabulary lists, example sentences
+- **Safety note:** Must validate input is actually a verb, handle unknown words
+
+#### 10. Budget Tracker Assistant
+- **Description:** Help with personal budgeting questions
+- **Extension:** `budget_calc` tool that computes percentages, totals, savings rates
+- **Documents:** Personal finance guides, budgeting templates, expense categories
+- **Safety note:** Must handle currency formatting, validate numeric inputs
+
+---
+
+## Tool vs Node: Which Should You Choose?
+
+> **Recommendation:** If this is your first time modifying an agentic system, **start with a node**. Add a tool only if your application genuinely requires new computation.
+
+### Why Nodes Are Easier
+
+**Simpler contract:**
+- Nodes receive state, return state updates
+- No direct LLM-generated input to validate
+- Can use existing tool results
+
+**Easier testing:**
+- Can unit test with mock state
+- Deterministic behavior possible
+- No security surface to protect
+
+### Why Tools Are Harder
+
+**Safety requirements:**
+- Tools execute code based on LLM output, which is unpredictable
+- Must validate/sanitize ALL inputs (see `safe_eval` in tools.py - 100+ lines for math safety)
+- Must handle malformed arguments gracefully
+- Must never raise unhandled exceptions (return error strings instead)
+- **NEVER use `eval()` or `exec()` on LLM input** - this allows arbitrary code execution
+- **NEVER access files or URLs** based on raw LLM input without strict validation
+
+**Output handling:**
+- Tools must return strings (LangChain requirement)
+- Complex results need serialization
+- Error messages must be informative but safe
+
+**LLM integration:**
+- Tool descriptions affect how/when the LLM calls them
+- Poor descriptions lead to misuse or non-use
+- Testing requires observing LLM behavior
+
+**Study `tools.py` thoroughly before attempting a new tool.**
+
+---
 
 ## CLI Commands
 
@@ -109,8 +234,8 @@ python -m ai_in_loop.cli demo --prompt "Your prompt here"
 
 When the LLM uses tools, you'll see output like:
 ```
-Tool call: search_docs(query="separation of powers")
-Tool result: Source: federalist_47.txt
+Tool call: search_docs(query="your query")
+Tool result: Source: your_document.txt
 Content: ...
 ```
 
@@ -118,76 +243,20 @@ Tool calls and results are also logged to `logs/runs.jsonl`.
 
 ---
 
-## Assignment Activities
-
-### Activity 1: Exploring Multi-turn RAG
-
-Conduct a 5+ turn research session on a topic from the Federalist Papers.
-
-1. Open `docs/activity1_research.md`
-2. Run `python -m ai_in_loop.cli chat`
-3. Complete a research investigation on your chosen topic
-4. Document how conversation builds across turns and when the model uses `search_docs`
-
-**Key discoveries to make:**
-- How multi-turn conversation enables deeper research
-- When and why the model searches documents
-- How well the model cites its sources
-
-### Activity 2: Design Your System Prompt
-
-Create a custom system prompt to improve the research experience.
-
-1. Open `docs/activity2_prompt_design.md`
-2. Review the example in `prompts/generic_prompt.md`
-3. Create your own prompt at `prompts/my_assistant.md`
-4. Test and compare behavior with your custom prompt
-
-**What you'll learn:**
-- How system prompts shape AI behavior
-- The relationship between persona, task, and response style
-- How to iterate on prompt design
-
-### Activity 3: Prompt Specificity and Tool Decisions
-
-Explore how telling the model about its document collection affects tool use.
-
-1. Open `docs/activity3_tool_decisions.md`
-2. Test three provided prompts (empty, generic, specific) with an out-of-scope question
-3. Observe how each prompt affects searching behavior and built-in knowledge usage
-4. Analyze how prompt specificity affects tool decision-making
-
-**Key insight:**
-When the model knows what's in its document collection, it makes better decisions about when searching will be useful and when to use built-in knowledge instead.
-
-### Activity 4: Reflection
-
-Connect A4 to earlier assignments through metacognitive reflection.
-
-1. Open `docs/activity4_reflection.md`
-2. Reflect on how multi-turn conversation changed your interaction
-3. Consider how RAG compares to the model's training data
-4. Synthesize what you've learned about shaping AI behavior
-
-### AI Dev Log Entry
-
-1. Open `docs/ai_dev_log.md`
-2. Complete Entry 4 for this week
-
----
-
-## Submission (A4)
+## Submission
 
 Complete all required files:
 
 | File | Description |
 |------|-------------|
-| `docs/activity1_research.md` | Document your multi-turn research session |
-| `docs/activity2_prompt_design.md` | Document your prompt design process |
-| `docs/activity3_tool_decisions.md` | Document your 3-prompt experiment |
-| `docs/activity4_reflection.md` | Reflect on A4 and course arc |
-| `docs/ai_dev_log.md` | Add Entry 4 reflecting on this week |
-| `prompts/my_assistant.md` | Your custom system prompt |
+| `docs/activity1_setup.md` | Application choice, documents, initial prompt |
+| `docs/activity2_extension.md` | Extension implementation documentation |
+| `docs/activity3_testing.md` | Testing transcripts, prompt iterations |
+| `docs/activity4_demo.md` | Demonstration transcript + reflection |
+| `docs/ai_dev_log.md` | Development log entry |
+| `prompts/application_prompt.md` | Your custom system prompt |
+| `resources/` | At least 5 documents for your application |
+| `ai_in_loop/graph.py` or `tools.py` | Your extension code |
 
 Then verify your submission:
 
@@ -198,10 +267,40 @@ python tests/verify_submission.py
 If that prints `Submission Verification: OK`, you're good to submit.
 
 **The verification script checks:**
-- All required files exist
-- Minimum content lengths are met
+- All required files exist with minimum content
 - No placeholder tokens remain (`REPLACE_ME`, `TODO`)
 - Required sections are present
+- Extension exists (node or tool added)
+- Resources directory has 5+ documents (no Federalist Papers)
+
+---
+
+## Code Review Preparation
+
+Be prepared to answer questions about your implementation. Categories include:
+
+### Graph Structure
+- How does the graph flow from user message to response?
+- What does `tools_condition` do?
+- How would you add a preprocessing node?
+
+### Tool Design & Safety
+- Why does `safe_eval` use AST parsing instead of `eval()`?
+- What happens if a tool receives invalid input?
+- How do tool docstrings affect LLM behavior?
+
+### System Prompts & LLM Behavior
+- Where is the system prompt injected?
+- When should guidance go in the prompt vs. tool docstring?
+
+### Your Extension
+- What problem does your extension solve?
+- Walk through your implementation
+- What inputs could break it?
+
+### Architecture
+- What does the graph abstraction provide over raw API calls?
+- What are the costs of passing all messages every invocation?
 
 ---
 
@@ -219,21 +318,14 @@ If that prints `Submission Verification: OK`, you're good to submit.
 | `CHUNK_SIZE` | `1000` | Characters per document chunk |
 | `CHUNK_OVERLAP` | `100` | Overlap between chunks |
 
+---
+
 ## Resources Directory
 
-The `resources/` directory contains the Federalist Papers:
-- 85 essays in `.txt` format
-- Written 1787-1788 by Hamilton, Madison, and Jay
-- Topics include: separation of powers, federalism, the judiciary, executive power, factions, and more
+The `resources/` directory starts empty. You must add your own documents:
 
-### About the Federalist Papers
+- **Minimum 5 documents** required
+- Supports `.txt` and `.pdf` formats
+- Documents should be relevant to your chosen application
 
-The Federalist Papers are a collection of 85 essays written to persuade New York voters to ratify the proposed U.S. Constitution. Alexander Hamilton conceived the project and recruited James Madison and John Jay as co-authors. Published anonymously under the pen name "Publius," these essays remain among the most important texts for understanding the original intent behind the Constitution.
-
-Key themes include:
-- **Federalist No. 10** (Madison): The dangers of factions and how a large republic can control them
-- **Federalist No. 51** (Madison): Separation of powers and checks and balances ("If men were angels, no government would be necessary")
-- **Federalist No. 78** (Hamilton): The role of the judiciary and judicial review
-- **Federalist No. 70** (Hamilton): The case for a strong executive branch
-
-These documents provide rich material for exploring how an AI research assistant can help you investigate primary sources.
+See `resources/README.md` for more details.

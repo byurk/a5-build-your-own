@@ -30,7 +30,7 @@ Keep entries lightweight with bullet points or brief paragraphs. Copy the templa
 
 ---
 
-## Entry 4 - RAG and Prompt Design
+## Entry 5 - Build Your Own
 
 **Date:** REPLACE_ME
 

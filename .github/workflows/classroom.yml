@@ -33,7 +33,7 @@ jobs:
         setup-command: ''
         command: pytest tests/test_tools.py tests/test_tool_graph.py tests/test_retriever.py -v
         timeout: 60
-        max-score: 20
+        max-score: 15
 
     - name: Documentation complete
       id: documentation-complete
@@ -45,41 +45,50 @@ jobs:
         timeout: 10
         max-score: 40
 
-    - name: Custom prompt has required sections
-      id: custom-prompt-sections
+    - name: Extension validation
+      id: extension-validation
       uses: classroom-resources/autograding-command-grader@v1
       with:
-        test-name: Custom prompt has required sections
+        test-name: Extension validation
+        setup-command: ''
+        command: |
+          python -c "
+          import re
+          from pathlib import Path
+
+          graph_code = Path('ai_in_loop/graph.py').read_text()
+          tools_code = Path('ai_in_loop/tools.py').read_text()
+
+          node_count = graph_code.count('graph.add_node(')
+          # Count @tool decorators at start of line (not in comments)
+          tool_count = len(re.findall(r'^\s*@tool\s*$', tools_code, re.MULTILINE))
+
+          # Baseline: 2 nodes, 2 tools - student must add at least one
+          assert node_count > 2 or tool_count > 2, (
+              f'Extension required: found {node_count} nodes and {tool_count} tools. '
+              f'Add a node to graph.py OR a tool to tools.py.'
+          )
+          print(f'Extension found: {node_count} nodes, {tool_count} tools')
+          "
+        timeout: 10
+        max-score: 25
+
+    - name: Application prompt sections
+      id: application-prompt-sections
+      uses: classroom-resources/autograding-command-grader@v1
+      with:
+        test-name: Application prompt sections
         setup-command: ''
         command: |
           python -c "
           from pathlib import Path
-          prompt = Path('prompts/my_assistant.md').read_text()
+          prompt = Path('prompts/application_prompt.md').read_text()
           assert '# Persona' in prompt, 'Missing # Persona section'
           assert '# Task' in prompt, 'Missing # Task section'
           assert '# Citations' in prompt, 'Missing # Citations section'
           assert len(prompt) >= 300, f'Prompt too short ({len(prompt)} chars, need 300)'
-          print('Custom prompt has all required sections')
-          "
-        timeout: 10
-        max-score: 20
-
-    - name: Experiment prompts exist
-      id: experiment-prompts
-      uses: classroom-resources/autograding-command-grader@v1
-      with:
-        test-name: Experiment prompts exist
-        setup-command: ''
-        command: |
-          python -c "
-          from pathlib import Path
-          generic = Path('prompts/generic_prompt.md')
-          specific = Path('prompts/specific_prompt.md')
-          assert generic.exists(), 'Missing prompts/generic_prompt.md'
-          assert specific.exists(), 'Missing prompts/specific_prompt.md'
-          assert len(generic.read_text()) >= 100, 'generic_prompt.md too short'
-          assert len(specific.read_text()) >= 150, 'specific_prompt.md too short'
-          print('Experiment prompts exist and have content')
+          assert 'REPLACE_ME' not in prompt, 'Prompt still contains REPLACE_ME placeholders'
+          print('Application prompt has all required sections')
           "
         timeout: 10
         max-score: 20
@@ -89,7 +98,7 @@ jobs:
       env:
         CORE-TESTS_RESULTS: "${{steps.core-tests.outputs.result}}"
         DOCUMENTATION-COMPLETE_RESULTS: "${{steps.documentation-complete.outputs.result}}"
-        CUSTOM-PROMPT-SECTIONS_RESULTS: "${{steps.custom-prompt-sections.outputs.result}}"
-        EXPERIMENT-PROMPTS_RESULTS: "${{steps.experiment-prompts.outputs.result}}"
+        EXTENSION-VALIDATION_RESULTS: "${{steps.extension-validation.outputs.result}}"
+        APPLICATION-PROMPT-SECTIONS_RESULTS: "${{steps.application-prompt-sections.outputs.result}}"
       with:
-        runners: core-tests,documentation-complete,custom-prompt-sections,experiment-prompts
+        runners: core-tests,documentation-complete,extension-validation,application-prompt-sections
