@@ -30,12 +30,22 @@ REPLACE_ME - Why did you choose a node vs. a tool (or both)? What factors influe
 
 ## Part 2: Design
 
+### Graph Architecture Constraint (for nodes)
+
+The graph follows a linear pattern and uses only `MessagesState`. Your node will execute **on every turn** of the conversation. Do not attempt:
+- Conditional execution (checking if it "should" run this turn)
+- Custom state fields beyond messages
+- Complex branching or subgraphs
+
+Your node should be a postprocessing step that improves every response (formatting, citations, structure, etc.).
+
 ### Input/Output Contract
 
 **For a node:**
 - What state does it read from? REPLACE_ME
 - What state does it update? REPLACE_ME
 - Where does it fit in the graph flow? REPLACE_ME
+- **Why does it make sense to run every turn?** REPLACE_ME
 
 **For a tool:**
 - What arguments does it accept? REPLACE_ME

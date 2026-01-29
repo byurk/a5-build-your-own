@@ -120,34 +120,57 @@ Add an entry documenting your work this week.
 
 ---
 
+## Choosing Your Application
+
+### Design Constraint: Linear Graph with Always-Run Nodes
+
+The existing graph has a simple structure:
+```
+START → agent → [tools_condition] → tools → agent (loop) → END
+```
+
+Your extension should fit this pattern. If you add a node, it should make sense to run **on every turn** of the conversation. Avoid applications that would require:
+- Conditional node execution (e.g., "only run on first response")
+- Custom state beyond `MessagesState`
+- Complex branching logic
+
+**Good node extensions** are postprocessing steps that improve every response:
+- Formatting output consistently
+- Adding citations or disclaimers
+- Structuring information for readability
+
+**Avoid** nodes that only make sense sometimes (e.g., "generate quiz questions" - you wouldn't want this on follow-up questions).
+
+---
+
 ## Example Application Ideas
 
 ### Easier (Node-focused)
 
 #### 1. Recipe Assistant
 - **Description:** Help users find and format recipes from a personal collection
-- **Extension:** `format_recipe` node that structures output (ingredients list, steps, timing)
+- **Extension:** `format_recipe` node that structures every response with ingredients list, steps, and timing
 - **Documents:** Family recipes, cuisine blogs, cookbook excerpts (copy/paste to .txt)
 
-#### 2. Study Guide Generator
-- **Description:** Create study materials from course content
-- **Extension:** `generate_questions` node that produces quiz questions after retrieval
-- **Documents:** Your own course notes, lecture slides (as text), textbook summaries
-
-#### 3. Personal Writing Coach
+#### 2. Personal Writing Coach
 - **Description:** Get feedback on writing based on style guides
-- **Extension:** `style_check` postprocessing node that flags issues
+- **Extension:** `style_check` node that reviews every response for style consistency
 - **Documents:** Style guides (APA, Chicago), your own past essays for examples
 
-#### 4. Club/Organization FAQ Bot
+#### 3. Club/Organization FAQ Bot
 - **Description:** Answer questions about a club, team, or student org
-- **Extension:** `citation_formatter` node that standardizes source references
+- **Extension:** `citation_formatter` node that standardizes source references in every response
 - **Documents:** Bylaws, meeting minutes, event policies, member handbooks
 
-#### 5. Game Rules Reference
-- **Description:** Answer questions about board game or video game rules
-- **Extension:** `clarify_rule` node that identifies ambiguous rules and asks for context
-- **Documents:** Rulebooks, FAQ pages, strategy guides (copy to .txt)
+#### 4. Fitness & Workout Guide
+- **Description:** Answer questions about exercises and workout routines
+- **Extension:** `safety_disclaimer` node that appends relevant safety reminders to every response
+- **Documents:** Exercise guides, workout plans, form instructions, injury prevention tips
+
+#### 5. Historical Events Guide
+- **Description:** Answer questions about a specific historical period or topic
+- **Extension:** `timeline_context` node that adds date/era context to every response
+- **Documents:** History textbooks, primary sources, timeline documents, biographical info
 
 ### Moderate (Node or Simple Tool)
 
@@ -156,14 +179,14 @@ Add an entry documenting your work this week.
 - **Extension:** `format_code` tool that wraps code snippets in proper markdown
 - **Documents:** README files, API docs, code comments extracted to text
 
-#### 7. Research Summary Assistant
-- **Description:** Summarize and compare academic papers in a field
-- **Extension:** `extract_sections` node that identifies abstract, methods, results
+#### 7. Research Paper Assistant
+- **Description:** Answer questions about academic papers in a specific field
+- **Extension:** `format_academic` node that structures responses with proper academic citations
 - **Documents:** Academic papers (PDF supported), literature review notes
 
 #### 8. Local Resource Guide
 - **Description:** Answer questions about campus or local community resources
-- **Extension:** `categorize_response` node that tags answers by type (food, health, etc.)
+- **Extension:** `categorize_response` node that tags every answer by resource type (food, health, housing, etc.)
 - **Documents:** Campus guides, local business info, community resource lists
 
 ### More Challenging (Tool with Safety Considerations)
@@ -174,7 +197,7 @@ Add an entry documenting your work this week.
 - **Documents:** Grammar guides, vocabulary lists, example sentences
 - **Safety note:** Must validate input is actually a verb, handle unknown words
 
-#### 10. Budget Tracker Assistant
+#### 10. Budget Calculator Assistant
 - **Description:** Help with personal budgeting questions
 - **Extension:** `budget_calc` tool that computes percentages, totals, savings rates
 - **Documents:** Personal finance guides, budgeting templates, expense categories
