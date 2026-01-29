@@ -36,7 +36,7 @@ ACTIVITY1_SECTIONS = [
 
 # Required sections for activity2_extension.md
 ACTIVITY2_SECTIONS = [
-    "## Part 1: Extension Choice",
+    "## Part 1: Tool Choice",
     "## Part 2: Design",
     "## Part 3: Implementation",
     "## Part 4: Safety Considerations",
@@ -117,47 +117,37 @@ def check_file(
     return problems
 
 
-def check_extension_exists() -> list[str]:
-    """Check that student added a node to graph.py OR a tool to tools.py.
+def check_tool_exists() -> list[str]:
+    """Check that student added a new tool to tools.py.
 
-    Baseline has 2 nodes (agent, tools) and 2 tools (python_calc, search_docs).
-    Student must add at least one more of either.
+    Baseline has 2 tools (python_calc, search_docs).
+    Student must add at least one more.
 
     Returns:
-        List of problems found (empty if extension exists)
+        List of problems found (empty if new tool exists)
     """
     import re
 
     problems: list[str] = []
 
-    graph_path = Path("ai_in_loop/graph.py")
     tools_path = Path("ai_in_loop/tools.py")
-
-    if not graph_path.exists():
-        problems.append("Missing ai_in_loop/graph.py")
-        return problems
 
     if not tools_path.exists():
         problems.append("Missing ai_in_loop/tools.py")
         return problems
 
-    graph_code = graph_path.read_text(encoding="utf-8")
     tools_code = tools_path.read_text(encoding="utf-8")
-
-    # Count nodes: look for graph.add_node( calls
-    node_count = graph_code.count("graph.add_node(")
 
     # Count tools: look for @tool decorator at start of line (not in comments)
     # Match lines that start with @tool (with optional whitespace)
     tool_count = len(re.findall(r"^\s*@tool\s*$", tools_code, re.MULTILINE))
 
-    # Baseline: 2 nodes, 2 tools
-    # Student must add at least one of either
-    if node_count <= 2 and tool_count <= 2:
+    # Baseline: 2 tools (python_calc, search_docs)
+    # Student must add at least one more
+    if tool_count <= 2:
         problems.append(
-            f"Extension required: Add a node to graph.py (currently {node_count}) "
-            f"OR a tool to tools.py (currently {tool_count}). "
-            f"You need more than 2 of at least one."
+            f"New tool required: Add a tool to tools.py (currently {tool_count}, need more than 2). "
+            f"See the README for example tool ideas."
         )
 
     return problems
@@ -220,8 +210,8 @@ def main() -> int:
         else:
             problems.extend(check_file(f, min_length=min_len))
 
-    # Check for extension (node or tool added)
-    problems.extend(check_extension_exists())
+    # Check for new tool
+    problems.extend(check_tool_exists())
 
     # Check resources directory
     problems.extend(check_resources())

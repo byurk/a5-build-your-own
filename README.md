@@ -7,9 +7,9 @@ In this assignment, you'll create your own AI-powered application by choosing a 
 You will:
 1. **Choose an application** - something interesting, useful, or entertaining
 2. **Provide your own documents** - at least 5 documents to serve as the knowledge base
-3. **Craft system prompts** - main prompt + any node-specific prompts
-4. **Extend the graph** - add a new node OR tool (or both)
-5. **Test and optimize** - iterate on prompts after building your extension
+3. **Craft a system prompt** - define your assistant's persona and behavior
+4. **Add a custom tool** - extend the assistant with a new computation it can perform
+5. **Test and optimize** - iterate on prompts and tool design
 
 ---
 
@@ -120,128 +120,105 @@ Add an entry documenting your work this week.
 
 ---
 
-## Choosing Your Application
-
-### Design Constraint: Linear Graph with Always-Run Nodes
-
-The existing graph has a simple structure:
-```
-START → agent → [tools_condition] → tools → agent (loop) → END
-```
-
-Your extension should fit this pattern. If you add a node, it should make sense to run **on every turn** of the conversation. Avoid applications that would require:
-- Conditional node execution (e.g., "only run on first response")
-- Custom state beyond `MessagesState`
-- Complex branching logic
-
-**Good node extensions** are postprocessing steps that improve every response:
-- Formatting output consistently
-- Adding citations or disclaimers
-- Structuring information for readability
-
-**Avoid** nodes that only make sense sometimes (e.g., "generate quiz questions" - you wouldn't want this on follow-up questions).
-
----
-
 ## Example Application Ideas
 
-### Easier (Node-focused)
+Your extension is a **new tool** in `tools.py`. Difficulty is based on **safety complexity** - how much input validation and error handling is required.
 
-#### 1. Recipe Assistant
-- **Description:** Help users find and format recipes from a personal collection
-- **Extension:** `format_recipe` node that structures every response with ingredients list, steps, and timing
-- **Documents:** Family recipes, cuisine blogs, cookbook excerpts (copy/paste to .txt)
+### Easy Tools (Minimal Safety)
 
-#### 2. Personal Writing Coach
-- **Description:** Get feedback on writing based on style guides
-- **Extension:** `style_check` node that reviews every response for style consistency
-- **Documents:** Style guides (APA, Chicago), your own past essays for examples
+Simple inputs, straightforward validation, few edge cases.
 
-#### 3. Club/Organization FAQ Bot
-- **Description:** Answer questions about a club, team, or student org
-- **Extension:** `citation_formatter` node that standardizes source references in every response
-- **Documents:** Bylaws, meeting minutes, event policies, member handbooks
+#### 1. Cooking Assistant
+- **Tool:** `convert_cooking_temp(fahrenheit)` - converts F to C for oven temperatures
+- **Safety:** Validate numeric input, check reasonable range (100-600°F)
+- **Documents:** Recipes, cooking technique guides
+- **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/subject/1184)
 
-#### 4. Fitness & Workout Guide
-- **Description:** Answer questions about exercises and workout routines
-- **Extension:** `safety_disclaimer` node that appends relevant safety reminders to every response
-- **Documents:** Exercise guides, workout plans, form instructions, injury prevention tips
+#### 2. Fitness FAQ Bot
+- **Tool:** `calculate_bmi(weight_kg, height_m)` - compute BMI from metric inputs
+- **Safety:** Validate positive numbers, reasonable ranges
+- **Documents:** Exercise guides, health information
+- **Source:** [CDC Healthy Weight](https://www.cdc.gov/healthy-weight/)
+
+#### 3. Reading Time Estimator
+- **Tool:** `reading_time(word_count)` - estimate minutes to read (assumes 200 wpm)
+- **Safety:** Validate positive integer
+- **Documents:** Articles, book excerpts on a topic you're interested in
+- **Source:** [Project Gutenberg](https://www.gutenberg.org/) or [OpenStax Textbooks](https://openstax.org/)
+
+#### 4. Study Helper
+- **Tool:** `pomodoro_check(minutes_studied)` - returns whether it's time for a break
+- **Safety:** Validate positive number
+- **Documents:** Study technique guides, course notes
+- **Source:** Your own course materials, [MIT OpenCourseWare](https://ocw.mit.edu/)
+
+### Medium Tools (Moderate Safety)
+
+More validation, multiple inputs, or more edge cases.
 
 #### 5. Historical Events Guide
-- **Description:** Answer questions about a specific historical period or topic
-- **Extension:** `timeline_context` node that adds date/era context to every response
-- **Documents:** History textbooks, primary sources, timeline documents, biographical info
+- **Tool:** `years_between(year1, year2)` - calculate years between events
+- **Safety:** Validate integers, handle BC/AD (negative years), check order
+- **Documents:** Historical articles, timelines, primary sources
+- **Source:** [Library of Congress](https://www.loc.gov/collections/), Wikipedia articles (copy to .txt)
 
-### Moderate (Node or Simple Tool)
+#### 6. Nutrition Assistant
+- **Tool:** `calculate_calories(protein_g, carbs_g, fat_g)` - compute total calories
+- **Safety:** Validate three numeric inputs, check non-negative
+- **Documents:** Nutrition guides, dietary information
+- **Source:** [USDA FoodData Central](https://fdc.nal.usda.gov/)
 
-#### 6. Code Documentation Helper
-- **Description:** Help understand a codebase from its documentation
-- **Extension:** `format_code` tool that wraps code snippets in proper markdown
-- **Documents:** README files, API docs, code comments extracted to text
+#### 7. Tip Calculator Bot
+- **Tool:** `split_bill(total, tip_percent, num_people)` - calculate per-person amount
+- **Safety:** Validate three inputs, handle zero people, round currency
+- **Documents:** Personal finance guides, etiquette guides
+- **Source:** [Investor.gov Financial Literacy](https://www.investor.gov/additional-resources/information/youth/teachers-classroom-resources/what-investing)
 
-#### 7. Research Paper Assistant
-- **Description:** Answer questions about academic papers in a specific field
-- **Extension:** `format_academic` node that structures responses with proper academic citations
-- **Documents:** Academic papers (PDF supported), literature review notes
+#### 8. Travel Planning Assistant
+- **Tool:** `days_until(date_string)` - days from today to a future date
+- **Safety:** Parse date string (handle multiple formats or require specific format), handle past dates
+- **Documents:** Travel guides, destination information
+- **Source:** [National Park Service](https://www.nps.gov/), [Wikivoyage](https://www.wikivoyage.org/)
 
-#### 8. Local Resource Guide
-- **Description:** Answer questions about campus or local community resources
-- **Extension:** `categorize_response` node that tags every answer by resource type (food, health, housing, etc.)
-- **Documents:** Campus guides, local business info, community resource lists
+### Hard Tools (Significant Safety)
 
-### More Challenging (Tool with Safety Considerations)
+Complex inputs, many failure modes, or careful parsing required. Study `safe_eval` in `tools.py` before attempting.
 
-#### 9. Language Learning Helper
-- **Description:** Help learn vocabulary and grammar for a specific language
-- **Extension:** `conjugate_verb` tool (for a language with regular conjugation rules)
-- **Documents:** Grammar guides, vocabulary lists, example sentences
-- **Safety note:** Must validate input is actually a verb, handle unknown words
+#### 9. Compound Interest Calculator
+- **Tool:** `compound_interest(principal, rate, years, compounds_per_year)`
+- **Safety:** Four numeric inputs, validate ranges (rate as decimal vs percent), handle edge cases (0 years, continuous compounding)
+- **Documents:** Financial literacy guides, investment basics
+- **Source:** [Investor.gov](https://www.investor.gov/)
 
-#### 10. Budget Calculator Assistant
-- **Description:** Help with personal budgeting questions
-- **Extension:** `budget_calc` tool that computes percentages, totals, savings rates
-- **Documents:** Personal finance guides, budgeting templates, expense categories
-- **Safety note:** Must handle currency formatting, validate numeric inputs
+#### 10. Unit Converter (Multi-Unit)
+- **Tool:** `convert_units(value, from_unit, to_unit)` - convert between various units
+- **Safety:** Validate unit strings against whitelist, handle incompatible units (can't convert kg to meters), many unit types
+- **Documents:** Science guides, cooking references, technical manuals
+- **Source:** [NIST Units](https://www.nist.gov/pml/owm/metric-si/si-units), [OpenStax Physics](https://openstax.org/details/books/college-physics-2e)
 
 ---
 
-## Tool vs Node: Which Should You Choose?
+## Tool Safety Requirements
 
-> **Recommendation:** If this is your first time modifying an agentic system, **start with a node**. Add a tool only if your application genuinely requires new computation.
+Tools execute code based on LLM-generated input, which is unpredictable. Study `safe_eval` in `tools.py` before writing your own tool.
 
-### Why Nodes Are Easier
-
-**Simpler contract:**
-- Nodes receive state, return state updates
-- No direct LLM-generated input to validate
-- Can use existing tool results
-
-**Easier testing:**
-- Can unit test with mock state
-- Deterministic behavior possible
-- No security surface to protect
-
-### Why Tools Are Harder
-
-**Safety requirements:**
-- Tools execute code based on LLM output, which is unpredictable
-- Must validate/sanitize ALL inputs (see `safe_eval` in tools.py - 100+ lines for math safety)
-- Must handle malformed arguments gracefully
-- Must never raise unhandled exceptions (return error strings instead)
-- **NEVER use `eval()` or `exec()` on LLM input** - this allows arbitrary code execution
+**Input validation:**
+- Validate ALL inputs - type, range, format
+- Never trust that the LLM will send correct arguments
+- **NEVER use `eval()` or `exec()`** - this allows arbitrary code execution
 - **NEVER access files or URLs** based on raw LLM input without strict validation
 
-**Output handling:**
-- Tools must return strings (LangChain requirement)
-- Complex results need serialization
-- Error messages must be informative but safe
+**Error handling:**
+- Always return strings (LangChain requirement)
+- Never raise unhandled exceptions - return error messages instead
+- Error messages should be helpful but not expose system details
 
 **LLM integration:**
-- Tool descriptions affect how/when the LLM calls them
-- Poor descriptions lead to misuse or non-use
-- Testing requires observing LLM behavior
+- Tool docstrings affect how/when the LLM calls them
+- Be specific about expected input format in the docstring
+- Test that the LLM actually uses your tool appropriately
 
-**Study `tools.py` thoroughly before attempting a new tool.**
+**Study `tools.py` thoroughly** - the existing `python_calc` tool demonstrates safe input handling with AST parsing.
 
 ---
 
@@ -279,7 +256,7 @@ Complete all required files:
 | `docs/ai_dev_log.md` | Development log entry |
 | `prompts/application_prompt.md` | Your custom system prompt |
 | `resources/` | At least 5 documents for your application |
-| `ai_in_loop/graph.py` or `tools.py` | Your extension code |
+| `ai_in_loop/tools.py` | Your new tool |
 
 Then verify your submission:
 
@@ -293,8 +270,8 @@ If that prints `Submission Verification: OK`, you're good to submit.
 - All required files exist with minimum content
 - No placeholder tokens remain (`REPLACE_ME`, `TODO`)
 - Required sections are present
-- Extension exists (node or tool added)
-- Resources directory has 5+ documents (no Federalist Papers)
+- New tool exists (more than 2 `@tool` decorators in tools.py)
+- Resources directory has 5+ documents
 
 ---
 

@@ -4,16 +4,6 @@ In this activity, you'll choose your application domain, gather your documents, 
 
 ## Part 1: Choose Your Application
 
-### Design Constraint
-
-The existing graph follows a linear pattern: `agent → tools → agent → END`. If you add a node, it will run **on every turn** of the conversation. Choose an application where this makes sense.
-
-**Good fit:** Applications where your extension improves every response (formatting, citations, disclaimers, structuring output).
-
-**Poor fit:** Applications requiring conditional logic (e.g., "only generate quiz questions on first response") or complex state tracking.
-
-See the README for example applications that fit this constraint.
-
 ### Application Name
 
 **Name:** REPLACE_ME
@@ -26,9 +16,9 @@ REPLACE_ME - Describe your application in 2-3 sentences. What does it do? Who is
 
 REPLACE_ME - Why did you choose this application? What makes it interesting, useful, or entertaining?
 
-### Extension Fit
+### Planned Tool
 
-REPLACE_ME - If you plan to add a node, explain why it makes sense to run on every turn. If you plan to add a tool, this constraint doesn't apply.
+REPLACE_ME - What tool do you plan to add? What computation will it perform that the LLM can't do on its own? See the README for example tool ideas organized by difficulty.
 
 ---
 

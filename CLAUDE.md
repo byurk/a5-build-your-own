@@ -59,18 +59,13 @@ The graph uses `MessagesState` which accumulates messages across the conversatio
 - **llm.py**: LLM abstraction with `MockChatModel` for testing without API calls.
 - **config.py**: `Config` dataclass loaded from environment variables via `Config.from_env()`.
 
-### Adding Extensions
+### Adding a Tool
 
-**To add a node** (easier):
-1. Define a function that takes `MessagesState` and returns `dict` with state updates
-2. Add it with `graph.add_node("name", function)`
-3. Wire edges appropriately
-
-**To add a tool** (harder - requires safety):
 1. Use `@tool` decorator from `langchain_core.tools`
 2. Tool must return strings, never raise unhandled exceptions
 3. Validate all inputs (see `safe_eval` as example of AST-based validation)
 4. Add to `TOOLS` list in graph.py
+5. Write a clear docstring - this tells the LLM when to use your tool
 
 ### Testing with Mock Model
 
@@ -81,7 +76,7 @@ Set `USE_GEMINI=0` to use `MockChatModel` which provides deterministic responses
 Students must:
 1. Add 5+ documents to `resources/`
 2. Create system prompt at `prompts/application_prompt.md`
-3. Add a node to graph.py OR a tool to tools.py (baseline: 2 nodes, 2 tools)
+3. Add a new tool to `tools.py` (baseline has 2 tools: `python_calc`, `search_docs`)
 4. Complete activity docs in `docs/`
 
-The verification script checks for `graph.add_node(` count > 2 OR `@tool` decorator count > 2.
+The verification script checks for `@tool` decorator count > 2 in `tools.py`.

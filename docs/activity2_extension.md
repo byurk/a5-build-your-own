@@ -1,56 +1,46 @@
-# Activity 2: Extension
+# Activity 2: Tool Implementation
 
-In this activity, you'll extend the graph by adding a new **node** OR **tool** (or both).
+In this activity, you'll extend the assistant by adding a new **tool** to `tools.py`.
 
-**Important:** Complete this activity BEFORE testing in Activity 3. You need the extension in place to test the full system.
+**Important:** Complete this activity BEFORE testing in Activity 3. You need the tool in place to test the full system.
 
 ---
 
-## Part 1: Extension Choice
+## Part 1: Tool Choice
 
-### What Are You Adding?
+### Tool Name
 
-- [ ] New node in `graph.py`
-- [ ] New tool in `tools.py`
-- [ ] Both
-
-### Extension Name
-
-**Name:** REPLACE_ME (e.g., `format_recipe`, `validate_input`, `calculate_budget`)
+**Name:** REPLACE_ME (e.g., `calculate_bmi`, `days_until`, `convert_temperature`)
 
 ### Purpose
 
-REPLACE_ME - What problem does this extension solve? Why is it necessary for your application?
+REPLACE_ME - What computation does this tool perform? Why can't the LLM do this reliably on its own?
 
-### Why This Type?
+### Difficulty Level
 
-REPLACE_ME - Why did you choose a node vs. a tool (or both)? What factors influenced your decision?
+- [ ] Easy (minimal safety) - simple inputs, basic validation
+- [ ] Medium (moderate safety) - multiple inputs, more edge cases
+- [ ] Hard (significant safety) - complex parsing, many failure modes
 
 ---
 
 ## Part 2: Design
 
-### Graph Architecture Constraint (for nodes)
+### Arguments
 
-The graph follows a linear pattern and uses only `MessagesState`. Your node will execute **on every turn** of the conversation. Do not attempt:
-- Conditional execution (checking if it "should" run this turn)
-- Custom state fields beyond messages
-- Complex branching or subgraphs
+What arguments does your tool accept?
 
-Your node should be a postprocessing step that improves every response (formatting, citations, structure, etc.).
+| Argument | Type | Description | Validation needed |
+|----------|------|-------------|-------------------|
+| REPLACE_ME | REPLACE_ME | REPLACE_ME | REPLACE_ME |
 
-### Input/Output Contract
+### Return Value
 
-**For a node:**
-- What state does it read from? REPLACE_ME
-- What state does it update? REPLACE_ME
-- Where does it fit in the graph flow? REPLACE_ME
-- **Why does it make sense to run every turn?** REPLACE_ME
+REPLACE_ME - What does your tool return? (Must be a string)
 
-**For a tool:**
-- What arguments does it accept? REPLACE_ME
-- What does it return? REPLACE_ME
-- When should the LLM call it? REPLACE_ME
+### When Should the LLM Call It?
+
+REPLACE_ME - Describe the situations where the LLM should use this tool. This will inform your docstring.
 
 ### Pseudocode/Logic
 
@@ -58,31 +48,25 @@ Your node should be a postprocessing step that improves every response (formatti
 REPLACE_ME - Write pseudocode or describe the logic in plain English
 ```
 
-### Additional Prompts Needed?
-
-If you're adding a node, does it need its own system prompt? (e.g., `prompts/validator_prompt.md`)
-
-REPLACE_ME - Describe any additional prompts you need to create.
-
 ---
 
 ## Part 3: Implementation
 
 ### Code Location
 
-**File(s) modified:** REPLACE_ME (e.g., `ai_in_loop/graph.py`, `ai_in_loop/tools.py`)
+**File modified:** `ai_in_loop/tools.py`
 
 ### Key Code Snippet
 
-Paste the most important part of your implementation (not the entire file):
+Paste your tool implementation:
 
 ```python
-REPLACE_ME - Paste the key lines that implement your extension
+REPLACE_ME - Paste your @tool decorated function
 ```
 
-### How It Integrates
+### Integration
 
-REPLACE_ME - Explain how your extension connects to the existing graph. If a node, how does it connect via edges? If a tool, how is it added to the TOOLS list?
+REPLACE_ME - Did you add your tool to the `TOOLS` list in `graph.py`? How does the LLM know when to use it (via the docstring)?
 
 ---
 
@@ -90,11 +74,11 @@ REPLACE_ME - Explain how your extension connects to the existing graph. If a nod
 
 **Important:** Tools execute code based on LLM-generated input, which is unpredictable. Review the `safe_eval` function in `tools.py` to see how the existing `python_calc` tool handles this safely.
 
-### Security Checklist (for tools)
+### Security Checklist
 
-If you added a tool, verify these:
+Verify these for your tool:
 
-- [ ] **Never use `eval()` or `exec()`** on LLM input - use AST parsing or explicit validation
+- [ ] **Never use `eval()` or `exec()`** on LLM input
 - [ ] **Always return strings** - never raise unhandled exceptions
 - [ ] **Validate input types** - check that arguments are the expected type before using
 - [ ] **Bound numeric inputs** - prevent memory exhaustion from extreme values
@@ -107,17 +91,15 @@ REPLACE_ME - What are the potential failure modes? What inputs could break it?
 
 ### How Do You Handle Errors?
 
-REPLACE_ME - How does your extension handle invalid inputs or unexpected situations?
+REPLACE_ME - How does your tool handle invalid inputs? Show example error returns.
 
-### For Tools: Input Validation
+### Input Validation
 
-If you added a tool, describe your input validation:
-
-REPLACE_ME - What checks do you perform? What happens with malformed arguments?
+REPLACE_ME - What specific checks do you perform on each argument? What happens with malformed input?
 
 ---
 
-## Part 5: Testing (Quick Verification)
+## Part 5: Quick Verification
 
 Before Activity 3's thorough testing, do a quick sanity check.
 
@@ -131,13 +113,13 @@ python -c "from ai_in_loop.graph import build_app; print('Graph builds OK')"
 
 ### Does It Run?
 
-Try a basic interaction that should trigger your extension.
+Try a basic interaction that should trigger your tool.
 
 **Test input:** REPLACE_ME
 
-**Did extension fire?** REPLACE_ME (yes/no/unsure)
+**Did tool fire?** REPLACE_ME (yes/no) - Look for "Tool call:" in the output
 
-**Output:** REPLACE_ME
+**Tool result:** REPLACE_ME
 
 ---
 
@@ -145,8 +127,9 @@ Try a basic interaction that should trigger your extension.
 
 Before moving to Activity 3:
 
-- [ ] Extension is implemented in the appropriate file
-- [ ] Code compiles without errors
-- [ ] Extension has clear documentation in code (docstrings/comments)
-- [ ] Safety considerations are addressed
-- [ ] Quick verification shows it basically works
+- [ ] Tool is implemented in `tools.py` with `@tool` decorator
+- [ ] Tool is added to `TOOLS` list in `graph.py`
+- [ ] Tool has a clear docstring explaining when to use it
+- [ ] All inputs are validated
+- [ ] Errors return strings (not exceptions)
+- [ ] Quick verification shows the LLM calls your tool appropriately

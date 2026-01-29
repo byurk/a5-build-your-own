@@ -45,30 +45,28 @@ jobs:
         timeout: 10
         max-score: 40
 
-    - name: Extension validation
-      id: extension-validation
+    - name: Tool validation
+      id: tool-validation
       uses: classroom-resources/autograding-command-grader@v1
       with:
-        test-name: Extension validation
+        test-name: Tool validation
         setup-command: ''
         command: |
           python -c "
           import re
           from pathlib import Path
 
-          graph_code = Path('ai_in_loop/graph.py').read_text()
           tools_code = Path('ai_in_loop/tools.py').read_text()
 
-          node_count = graph_code.count('graph.add_node(')
           # Count @tool decorators at start of line (not in comments)
           tool_count = len(re.findall(r'^\s*@tool\s*$', tools_code, re.MULTILINE))
 
-          # Baseline: 2 nodes, 2 tools - student must add at least one
-          assert node_count > 2 or tool_count > 2, (
-              f'Extension required: found {node_count} nodes and {tool_count} tools. '
-              f'Add a node to graph.py OR a tool to tools.py.'
+          # Baseline: 2 tools (python_calc, search_docs) - student must add at least one
+          assert tool_count > 2, (
+              f'New tool required: found {tool_count} tools in tools.py (need more than 2). '
+              f'Add a new tool with the @tool decorator.'
           )
-          print(f'Extension found: {node_count} nodes, {tool_count} tools')
+          print(f'Tool found: {tool_count} tools')
           "
         timeout: 10
         max-score: 25
@@ -98,7 +96,7 @@ jobs:
       env:
         CORE-TESTS_RESULTS: "${{steps.core-tests.outputs.result}}"
         DOCUMENTATION-COMPLETE_RESULTS: "${{steps.documentation-complete.outputs.result}}"
-        EXTENSION-VALIDATION_RESULTS: "${{steps.extension-validation.outputs.result}}"
+        TOOL-VALIDATION_RESULTS: "${{steps.tool-validation.outputs.result}}"
         APPLICATION-PROMPT-SECTIONS_RESULTS: "${{steps.application-prompt-sections.outputs.result}}"
       with:
-        runners: core-tests,documentation-complete,extension-validation,application-prompt-sections
+        runners: core-tests,documentation-complete,tool-validation,application-prompt-sections
