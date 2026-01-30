@@ -132,13 +132,13 @@ Simple inputs, straightforward validation.
 - **Tool:** `convert_cooking_temp(fahrenheit)` - converts F to C for oven temperatures
 - **Safety:** Validate numeric input, check reasonable range (100-600°F)
 - **Documents:** Recipes, cooking technique guides
-- **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/subject/1184)
+- **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/bookshelf/419)
 
 #### 2. Fitness FAQ Bot
 - **Tool:** `calculate_bmi(weight_kg, height_m)` - compute BMI from metric inputs
 - **Safety:** Validate positive numbers, reasonable ranges
 - **Documents:** Exercise guides, health information
-- **Source:** [CDC Healthy Weight](https://www.cdc.gov/healthy-weight/)
+- **Source:** [CDC Healthy Weight](https://www.cdc.gov/healthy-weight-growth/)
 
 #### 3. Reading Time Estimator
 - **Tool:** `reading_time(word_count)` - estimate minutes to read (assumes 200 wpm)
@@ -172,7 +172,7 @@ More validation, multiple inputs, more ways things can go wrong.
 - **Tool:** `split_bill(total, tip_percent, num_people)` - calculate per-person amount
 - **Safety:** Validate three inputs, handle zero people, round currency
 - **Documents:** Personal finance guides, etiquette guides
-- **Source:** [Investor.gov Financial Literacy](https://www.investor.gov/additional-resources/information/youth/teachers-classroom-resources/what-investing)
+- **Source:** [Investor.gov](https://www.investor.gov/)
 
 #### 8. Travel Planning Assistant
 - **Tool:** `days_until(date_string)` - days from today to a future date
