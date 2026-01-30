@@ -280,6 +280,8 @@ If that prints `Submission Verification: OK`, you're good to submit.
 
 ## Code Review Preparation
 
+See [docs/code_review_rubric.md](docs/code_review_rubric.md) for grading criteria.
+
 ### Presentation (3-5 slides + live demo)
 
 You will begin your code review with a short presentation covering:
@@ -291,7 +293,7 @@ Then give a live demonstration showing document retrieval and your tool in actio
 
 ### Questions
 
-After your presentation, the instructor will select from these questions:
+After your presentation, the instructor will select from these questions. Be prepared to show specific parts of your code when answering.
 
 #### Your Application
 1. Why did you choose this domain? What makes it a good fit for RAG?
