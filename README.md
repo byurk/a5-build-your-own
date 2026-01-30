@@ -126,7 +126,7 @@ Your extension is a **new tool** in `tools.py`. Difficulty is based on **safety 
 
 ### Easy Tools (Minimal Safety)
 
-Simple inputs, straightforward validation, few edge cases.
+Simple inputs, straightforward validation.
 
 #### 1. Cooking Assistant
 - **Tool:** `convert_cooking_temp(fahrenheit)` - converts F to C for oven temperatures
@@ -154,7 +154,7 @@ Simple inputs, straightforward validation, few edge cases.
 
 ### Medium Tools (Moderate Safety)
 
-More validation, multiple inputs, or more edge cases.
+More validation, multiple inputs, more ways things can go wrong.
 
 #### 5. Historical Events Guide
 - **Tool:** `years_between(year1, year2)` - calculate years between events
@@ -186,7 +186,7 @@ Complex inputs, many failure modes, or careful parsing required. Study `safe_eva
 
 #### 9. Compound Interest Calculator
 - **Tool:** `compound_interest(principal, rate, years, compounds_per_year)`
-- **Safety:** Four numeric inputs, validate ranges (rate as decimal vs percent), handle edge cases (0 years, continuous compounding)
+- **Safety:** Four numeric inputs, validate ranges (rate as decimal vs percent), handle special cases (0 years, continuous compounding)
 - **Documents:** Financial literacy guides, investment basics
 - **Source:** [Investor.gov](https://www.investor.gov/)
 

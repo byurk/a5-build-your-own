@@ -20,7 +20,7 @@ REPLACE_ME - Paste your complete conversation here
 
 **Did the extension fire?** REPLACE_ME (yes/no) - Include evidence from the output.
 
-### Test Conversation 2: Edge Cases
+### Test Conversation 2: Unusual Inputs
 
 A conversation that tests boundary conditions or unusual inputs.
 
