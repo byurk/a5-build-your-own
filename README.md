@@ -122,79 +122,71 @@ Add an entry documenting your work this week.
 
 ## Example Application Ideas
 
-Your extension is a **new tool** in `tools.py`. Difficulty is based on **safety complexity** - how much input validation and error handling is required.
+Your extension is a **new tool** in `tools.py`. The key is choosing a tool that naturally complements the information in your documents—something a user would want to calculate *after* learning something from the RAG system.
 
-### Easy Tools (Minimal Safety)
+**Good fit:** User asks about recipes → RAG returns a recipe → User asks to convert the oven temperature from Fahrenheit to Celsius → Tool does the conversion.
 
-Simple inputs, straightforward validation.
+**Poor fit:** User asks about study techniques → RAG returns study guides → User asks... to check if it's time for a pomodoro break? The tool has nothing to do with the document content.
 
-#### 1. Cooking Assistant
+### 1. Cooking Assistant
 - **Tool:** `convert_cooking_temp(fahrenheit)` - converts F to C for oven temperatures
-- **Safety:** Validate numeric input, check reasonable range (100-600°F)
+- **Example flow:** User finds a recipe, recipe says "bake at 375°F", user asks for Celsius
 - **Documents:** Recipes, cooking technique guides
 - **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/bookshelf/419)
 
-#### 2. Fitness FAQ Bot
-- **Tool:** `calculate_bmi(weight_kg, height_m)` - compute BMI from metric inputs
-- **Safety:** Validate positive numbers, reasonable ranges
-- **Documents:** Exercise guides, health information
-- **Source:** [CDC Healthy Weight](https://www.cdc.gov/healthy-weight-growth/)
+### 2. Recipe Scaler
+- **Tool:** `scale_ingredient(original_amount, original_servings, desired_servings)` - scales recipe quantities
+- **Example flow:** User finds a recipe that serves 4, wants to make it for 6 people
+- **Documents:** Recipes, cooking guides
+- **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/bookshelf/419)
 
-#### 3. Reading Time Estimator
-- **Tool:** `reading_time(word_count)` - estimate minutes to read (assumes 200 wpm)
-- **Safety:** Validate positive integer
-- **Documents:** Articles, book excerpts on a topic you're interested in
-- **Source:** [Project Gutenberg](https://www.gutenberg.org/) or [OpenStax Textbooks](https://openstax.org/)
-
-#### 4. Study Helper
-- **Tool:** `pomodoro_check(minutes_studied)` - returns whether it's time for a break
-- **Safety:** Validate positive number
-- **Documents:** Study technique guides, course notes
-- **Source:** Your own course materials, [MIT OpenCourseWare](https://ocw.mit.edu/)
-
-### Medium Tools (Moderate Safety)
-
-More validation, multiple inputs, more ways things can go wrong.
-
-#### 5. Historical Events Guide
+### 3. Historical Events Guide
 - **Tool:** `years_between(year1, year2)` - calculate years between events
-- **Safety:** Validate integers, handle BC/AD (negative years), check order
+- **Example flow:** User reads about two historical events, asks "how many years between the signing of the Declaration and the end of the Civil War?"
 - **Documents:** Historical articles, timelines, primary sources
 - **Source:** [Library of Congress](https://www.loc.gov/collections/), Wikipedia articles (copy to .txt)
 
-#### 6. Nutrition Assistant
-- **Tool:** `calculate_calories(protein_g, carbs_g, fat_g)` - compute total calories
-- **Safety:** Validate three numeric inputs, check non-negative
-- **Documents:** Nutrition guides, dietary information
+### 4. Nutrition Assistant
+- **Tool:** `calculate_calories(protein_g, carbs_g, fat_g)` - compute total calories from macros
+- **Example flow:** User asks about a food, RAG returns nutrition info with macros, user wants total calories
+- **Documents:** Nutrition guides, food composition data
 - **Source:** [USDA FoodData Central](https://fdc.nal.usda.gov/)
 
-#### 7. Tip Calculator Bot
-- **Tool:** `split_bill(total, tip_percent, num_people)` - calculate per-person amount
-- **Safety:** Validate three inputs, handle zero people, round currency
-- **Documents:** Personal finance guides, etiquette guides
+### 5. Personal Finance Guide
+- **Tool:** `calculate_loan_payment(principal, annual_rate, years)` - compute monthly payment
+- **Example flow:** User reads about mortgages, docs mention typical rates, user calculates payment for their situation
+- **Documents:** Financial literacy guides, loan explanations
 - **Source:** [Investor.gov](https://www.investor.gov/)
 
-#### 8. Travel Planning Assistant
-- **Tool:** `days_until(date_string)` - days from today to a future date
-- **Safety:** Parse date string (handle multiple formats or require specific format), handle past dates
+### 6. Science Textbook Helper
+- **Tool:** `convert_units(value, from_unit, to_unit)` - convert between units (limited set)
+- **Example flow:** User reads physics explanation with metric units, wants imperial conversion
+- **Documents:** Textbook chapters, science explanations
+- **Source:** [OpenStax Physics](https://openstax.org/details/books/college-physics-2e), [OpenStax Chemistry](https://openstax.org/details/books/chemistry-2e)
+
+### 7. Gardening Planner
+- **Tool:** `days_until_harvest(planting_date, days_to_maturity)` - calculate expected harvest date
+- **Example flow:** User asks about growing tomatoes, docs say "70 days to maturity", user asks when to expect harvest if planted June 1
+- **Documents:** Planting guides, seed catalogs, gardening tips
+- **Source:** [USDA Plant Hardiness](https://planthardiness.ars.usda.gov/), seed company guides (copy to .txt)
+
+### 8. Running/Fitness Coach
+- **Tool:** `calculate_pace(distance_km, time_minutes)` - compute pace in min/km
+- **Example flow:** User asks about training plans, docs explain pace zones, user calculates their pace from a recent run
+- **Documents:** Running guides, training plans
+- **Source:** [CDC Physical Activity](https://www.cdc.gov/physical-activity/), running blogs (copy to .txt)
+
+### 9. Board Game Rules Helper
+- **Tool:** `roll_dice(num_dice, num_sides)` - simulate dice rolls
+- **Example flow:** User asks about game mechanics, docs explain "roll 2d6 for damage", user wants to simulate a roll
+- **Documents:** Game rulebooks, strategy guides
+- **Source:** Your own rulebooks (copy rules sections to .txt)
+
+### 10. Travel Budget Helper
+- **Tool:** `convert_currency(amount, exchange_rate)` - convert to local currency
+- **Example flow:** User asks about destination, docs mention prices in local currency, user converts to their currency
 - **Documents:** Travel guides, destination information
-- **Source:** [National Park Service](https://www.nps.gov/), [Wikivoyage](https://www.wikivoyage.org/)
-
-### Hard Tools (Significant Safety)
-
-Complex inputs, many failure modes, or careful parsing required. Study `safe_eval` in `tools.py` before attempting.
-
-#### 9. Compound Interest Calculator
-- **Tool:** `compound_interest(principal, rate, years, compounds_per_year)`
-- **Safety:** Four numeric inputs, validate ranges (rate as decimal vs percent), handle special cases (0 years, continuous compounding)
-- **Documents:** Financial literacy guides, investment basics
-- **Source:** [Investor.gov](https://www.investor.gov/)
-
-#### 10. Unit Converter (Multi-Unit)
-- **Tool:** `convert_units(value, from_unit, to_unit)` - convert between various units
-- **Safety:** Validate unit strings against whitelist, handle incompatible units (can't convert kg to meters), many unit types
-- **Documents:** Science guides, cooking references, technical manuals
-- **Source:** [NIST Units](https://www.nist.gov/pml/owm/metric-si/si-units), [OpenStax Physics](https://openstax.org/details/books/college-physics-2e)
+- **Source:** [Wikivoyage](https://www.wikivoyage.org/), [National Park Service](https://www.nps.gov/)
 
 ---
 
