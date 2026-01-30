@@ -277,7 +277,7 @@ After your presentation, the instructor will select from these questions. Be pre
 3. What would a response look like without document retrieval?
 
 #### Your Tool
-4. What problem does your tool solve? Why might the LLM not handle this reliably on its own?
+4. What problem does your tool solve? How do document contents lead to tool usage?
 5. Walk through the key lines of your implementation
 6. Did you use typed parameters or AST parsing? Why was that the right choice?
 7. What value ranges do you check? Why are those the right bounds?
