@@ -34,4 +34,4 @@ Then ask a question that should trigger a document search.
 
 ---
 
-**Note:** Delete this README.md after adding your documents, or keep it - it won't affect the retriever.
+**Note:** Delete this README.md after adding your documents, or keep it - it won't affect the retriever since it has a .md extension instead of .txt or .pdf.
