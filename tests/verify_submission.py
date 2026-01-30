@@ -8,7 +8,7 @@ REQUIRED_FILES = [
     Path("docs/activity1_setup.md"),
     Path("docs/activity2_extension.md"),
     Path("docs/activity3_testing.md"),
-    Path("docs/activity4_demo.md"),
+    Path("docs/activity4_reflection.md"),
     Path("prompts/application_prompt.md"),
 ]
 
@@ -50,12 +50,12 @@ ACTIVITY3_SECTIONS = [
     "## Part 4: Tool Usage Analysis",
 ]
 
-# Required sections for activity4_demo.md
+# Required sections for activity4_reflection.md (now reflection-focused)
 ACTIVITY4_SECTIONS = [
-    "## Part 1: Demo Transcript",
-    "## Part 2: Extension Evidence",
-    "## Part 3: Design Reflection",
-    "## Part 4: Technical Reflection",
+    "## Part 1: Application Choice",
+    "## Part 2: Tool Choice",
+    "## Part 3: Prompt Engineering",
+    "## Part 4: Key Takeaways",
 ]
 
 # Required sections for application_prompt.md
@@ -71,7 +71,7 @@ MIN_LENGTHS = {
     "docs/activity1_setup.md": 600,
     "docs/activity2_extension.md": 700,
     "docs/activity3_testing.md": 800,
-    "docs/activity4_demo.md": 600,
+    "docs/activity4_reflection.md": 400,
     "prompts/application_prompt.md": 300,
 }
 
@@ -203,7 +203,7 @@ def main() -> int:
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY2_SECTIONS))
         elif f.name == "activity3_testing.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY3_SECTIONS))
-        elif f.name == "activity4_demo.md":
+        elif f.name == "activity4_reflection.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=ACTIVITY4_SECTIONS))
         elif f.name == "application_prompt.md":
             problems.extend(check_file(f, min_length=min_len, required_fields=APPLICATION_PROMPT_SECTIONS))

@@ -16,15 +16,11 @@ REPLACE_ME - Describe your application in 2-3 sentences. What does it do? Who is
 
 REPLACE_ME - Why did you choose this application? What makes it interesting, useful, or entertaining?
 
-### Planned Tool
-
-REPLACE_ME - What tool do you plan to add? What computation will it perform that the LLM can't do on its own? See the README for example tool ideas organized by difficulty.
-
 ---
 
 ## Part 2: Gather Your Documents
 
-You must provide **at least 5 documents** in the `resources/` directory. These will be the knowledge base for your assistant.
+You must provide **at least 5 documents** (`.txt` or `.pdf`) in the `resources/` directory. These will be the knowledge base for your assistant.
 
 ### Document List
 
@@ -64,36 +60,17 @@ Create your initial system prompt in `prompts/application_prompt.md`. You'll ite
 
 ## Part 4: Verification
 
-### Documents Load Successfully
+### Test Document Retrieval
 
-Run the following to verify your documents are accessible:
+Run the CLI and ask a question that should trigger a search of your documents:
 
 ```bash
 python -m ai_in_loop.cli chat
 ```
 
-Then ask: "What documents do you have access to?" or a relevant question about your content.
+**Question asked:** REPLACE_ME - Use specific keywords that appear in your documents
 
-**Result:** REPLACE_ME - Did it work? Paste the response or describe what happened.
+**Did search_docs fire?** REPLACE_ME (yes/no) - Look for "Tool call: search_docs" in the output or check `logs/runs.jsonl`
 
-### search_docs Tool Works
+**Result:** REPLACE_ME - Paste the response or describe what the assistant found
 
-Ask a question that requires searching your documents.
-
-**Question asked:** REPLACE_ME
-
-**Did search_docs fire?** REPLACE_ME (yes/no)
-
-**Result summary:** REPLACE_ME - Brief description of what the assistant found.
-
----
-
-## Checklist
-
-Before moving to Activity 2, verify:
-
-- [ ] Application name and description are clear
-- [ ] At least 5 documents are in `resources/`
-- [ ] Documents are `.txt` or `.pdf` format
-- [ ] Initial prompt exists at `prompts/application_prompt.md`
-- [ ] `search_docs` successfully retrieves from your documents

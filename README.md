@@ -90,7 +90,7 @@ Choose your application, gather 5+ documents, and create your initial system pro
 Add a new tool to extend the system's capabilities.
 
 1. Design your extension (what problem does it solve?)
-2. Implement it in `graph.py` or `tools.py`
+2. Implement it in `graph.py` and `tools.py`
 3. Document the implementation and safety considerations
 4. Do a quick verification that it works
 
@@ -105,14 +105,14 @@ Test the full system and iterate on your prompts.
 3. Document before/after comparisons
 4. Analyze tool usage patterns
 
-### Activity 4: Demonstration (docs/activity4_demo.md)
+### Activity 4: Reflection (docs/activity4_reflection.md)
 
-Create a polished demonstration and reflect on your design.
+Reflect on your design decisions and what you learned.
 
-1. Provide a 3-5 turn demo transcript
-2. Show evidence your extension fired
-3. Reflect on design decisions
-4. Connect to earlier assignments
+1. Why was your application a good fit for RAG?
+2. Why did you choose this tool?
+3. What did you learn about prompt design?
+4. Key takeaways
 
 ### AI Dev Log Entry (docs/ai_dev_log.md)
 
@@ -200,17 +200,20 @@ Complex inputs, many failure modes, or careful parsing required. Study `safe_eva
 
 ## Tool Safety Requirements
 
-Tools execute code based on LLM-generated input, which is unpredictable. Study `safe_eval` in `tools.py` before writing your own tool.
+Tools execute code based on LLM-generated input, which is unpredictable.
 
-**Input validation:**
-- Validate ALL inputs - type, range, format
-- Never trust that the LLM will send correct arguments
-- **NEVER use `eval()` or `exec()`** - this allows arbitrary code execution
-- **NEVER access files or URLs** based on raw LLM input without strict validation
+**Most tools (typed parameters):**
+- Use type hints (e.g., `def my_tool(x: float)`) - LangChain validates types automatically
+- Add range checks for unreasonable values (e.g., negative weights, dates in year 9999)
+- If something goes wrong, return an error message string instead of crashing
 
-**Error handling:**
-- Always return strings (LangChain requirement)
-- Never raise unhandled exceptions - return error messages instead
+**Expression evaluators only:**
+- If your tool accepts arbitrary expressions (like a calculator), use AST parsing
+- **Avoid `eval()` or `exec()`** - see `safe_eval` in tools.py for the safe pattern
+- Most student tools won't need this - use typed parameters instead
+
+**General safety:**
+- Your tool shouldn't need file or network access - use `search_docs` for document retrieval
 - Error messages should be helpful but not expose system details
 
 **LLM integration:**
@@ -218,7 +221,7 @@ Tools execute code based on LLM-generated input, which is unpredictable. Study `
 - Be specific about expected input format in the docstring
 - Test that the LLM actually uses your tool appropriately
 
-**Study `tools.py` thoroughly** - the existing `python_calc` tool demonstrates safe input handling with AST parsing.
+See `docs/activity2_extension.md` for detailed examples of both patterns.
 
 ---
 
@@ -252,7 +255,7 @@ Complete all required files:
 | `docs/activity1_setup.md` | Application choice, documents, initial prompt |
 | `docs/activity2_extension.md` | Extension implementation documentation |
 | `docs/activity3_testing.md` | Testing transcripts, prompt iterations |
-| `docs/activity4_demo.md` | Demonstration transcript + reflection |
+| `docs/activity4_reflection.md` | Design reflection |
 | `docs/ai_dev_log.md` | Development log entry |
 | `prompts/application_prompt.md` | Your custom system prompt |
 | `resources/` | At least 5 documents for your application |

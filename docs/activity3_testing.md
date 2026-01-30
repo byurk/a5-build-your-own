@@ -30,17 +30,19 @@ REPLACE_ME - Paste your complete conversation here
 
 **Issues discovered:** REPLACE_ME
 
-**Did the extension handle edge cases?** REPLACE_ME
+**Did your tool handle unusual inputs?** REPLACE_ME
 
-### Test Conversation 3: Extension-Focused
+### Test Conversation 3: Finding the Limits
 
-A conversation specifically designed to exercise your extension.
+Try to find where your system struggles. Does the LLM call your tool when it shouldn't? Miss opportunities to use it? Give wrong or unhelpful responses?
+
+**Example(s) of limitations found:**
 
 ```
-REPLACE_ME - Paste your complete conversation here
+REPLACE_ME - Paste one or two examples showing where the system struggled
 ```
 
-**Extension behavior:** REPLACE_ME - Describe how your extension performed.
+**What did you discover?** REPLACE_ME - Describe where the system struggled or made poor decisions.
 
 ---
 
@@ -134,14 +136,3 @@ REPLACE_ME - What doesn't work perfectly? What would you improve with more time?
 
 REPLACE_ME - What additional tools would enhance your application?
 
----
-
-## Checklist
-
-Before moving to Activity 4:
-
-- [ ] At least 3 test conversations documented
-- [ ] Prompts have been iterated at least once
-- [ ] Before/after comparison shows improvement
-- [ ] Tool usage patterns are understood
-- [ ] Known limitations are documented

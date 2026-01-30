@@ -62,7 +62,7 @@ The graph uses `MessagesState` which accumulates messages across the conversatio
 ### Adding a Tool
 
 1. Use `@tool` decorator from `langchain_core.tools`
-2. Tool must return strings, never raise unhandled exceptions
+2. Tool must return strings - if something goes wrong, return an error message instead of crashing
 3. Validate all inputs (see `safe_eval` as example of AST-based validation)
 4. Add to `TOOLS` list in graph.py
 5. Write a clear docstring - this tells the LLM when to use your tool
