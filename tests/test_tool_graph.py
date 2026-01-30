@@ -4,7 +4,7 @@ Tests the full flow of the LangGraph application with tool calling,
 using MockChatModel to simulate LLM behavior without API calls.
 
 These tests are designed to be extension-tolerant: they validate that
-the core framework works while allowing students to add nodes/tools.
+the core framework works while allowing students to add new tools.
 """
 
 import pytest
