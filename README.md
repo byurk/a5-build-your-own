@@ -280,30 +280,49 @@ If that prints `Submission Verification: OK`, you're good to submit.
 
 ## Code Review Preparation
 
-Be prepared to answer questions about your implementation. Categories include:
+### Presentation (3-5 slides + live demo)
 
-### Graph Structure
-- How does the graph flow from user message to response?
-- What does `tools_condition` do?
-- How are tools made available to the LLM?
+You will begin your code review with a short presentation covering:
+- What your application does and who it's for
+- Your document collection (what topics, why these sources)
+- Your custom tool (what it does, why it's needed)
 
-### Tool Design & Safety
-- Why does `safe_eval` use AST parsing instead of `eval()`?
-- What happens if a tool receives invalid input?
-- How do tool docstrings affect LLM behavior?
+Then give a live demonstration showing document retrieval and your tool in action.
 
-### System Prompts & LLM Behavior
-- Where is the system prompt injected?
-- When should guidance go in the prompt vs. tool docstring?
+### Questions
 
-### Your Tool
-- What problem does your tool solve?
-- Walk through your implementation
-- What inputs could break it? How do you handle them?
+After your presentation, the instructor will select from these questions:
 
-### Architecture
-- What does the graph abstraction provide over raw API calls?
-- What are the costs of passing all messages every invocation?
+#### Your Application
+1. Why did you choose this domain? What makes it a good fit for RAG?
+2. What gaps exist in your document collection? What would you add?
+3. What would a response look like without document retrieval?
+
+#### Your Tool
+4. What problem does your tool solve? Why might the LLM not handle this reliably on its own?
+5. Walk through the key lines of your implementation
+6. Did you use typed parameters or AST parsing? Why was that the right choice?
+7. What value ranges do you check? Why are those the right bounds?
+8. Demonstrate your error handling by calling your tool directly with a bad value (see tip below)
+9. How did you test your tool? What did you discover?
+
+#### Prompt Engineering
+10. How did you decide what to put in the system prompt vs. tool docstrings?
+11. What changes did you make to your prompts after testing? Why?
+12. How does your system prompt affect when the LLM calls your tool?
+13. Show an example where prompt changes improved behavior
+
+#### Safety & Architecture
+14. Why does `safe_eval` use AST parsing instead of `eval()`?
+15. Why is it better for tools to return error strings instead of raising exceptions?
+16. What does `tools_condition` do in the graph?
+17. How is conversation history maintained across turns?
+18. What are the costs of passing all messages every invocation?
+
+**Tip for question 8:** You can call your tool directly to test error handling:
+```bash
+python -c "from ai_in_loop.tools import your_tool; print(your_tool.invoke({'param': bad_value}))"
+```
 
 ---
 
