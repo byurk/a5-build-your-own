@@ -70,11 +70,11 @@ REPLACE_ME - Paste the relevant part of your improved prompt
 
 REPLACE_ME - Explain specific changes you made and why you expected them to help.
 
-### Node-Specific Prompts (If Applicable)
+### Tool Docstring Iterations (If Applicable)
 
-If you added a node with its own prompt, document iterations here:
+If you modified your tool's docstring to improve when the LLM calls it:
 
-**Prompt file:** REPLACE_ME (e.g., `prompts/validator_prompt.md`)
+**Original docstring issue:** REPLACE_ME (e.g., LLM wasn't calling the tool, or calling it incorrectly)
 
 **Changes made:** REPLACE_ME
 
@@ -132,7 +132,7 @@ REPLACE_ME - What doesn't work perfectly? What would you improve with more time?
 
 ### Potential Future Extensions
 
-REPLACE_ME - What additional nodes or tools would enhance your application?
+REPLACE_ME - What additional tools would enhance your application?
 
 ---
 

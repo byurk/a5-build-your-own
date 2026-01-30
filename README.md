@@ -87,7 +87,7 @@ Choose your application, gather 5+ documents, and create your initial system pro
 
 ### Activity 2: Extension (docs/activity2_extension.md)
 
-Add a new node OR tool to extend the system's capabilities.
+Add a new tool to extend the system's capabilities.
 
 1. Design your extension (what problem does it solve?)
 2. Implement it in `graph.py` or `tools.py`
@@ -282,7 +282,7 @@ Be prepared to answer questions about your implementation. Categories include:
 ### Graph Structure
 - How does the graph flow from user message to response?
 - What does `tools_condition` do?
-- How would you add a preprocessing node?
+- How are tools made available to the LLM?
 
 ### Tool Design & Safety
 - Why does `safe_eval` use AST parsing instead of `eval()`?
@@ -293,10 +293,10 @@ Be prepared to answer questions about your implementation. Categories include:
 - Where is the system prompt injected?
 - When should guidance go in the prompt vs. tool docstring?
 
-### Your Extension
-- What problem does your extension solve?
+### Your Tool
+- What problem does your tool solve?
 - Walk through your implementation
-- What inputs could break it?
+- What inputs could break it? How do you handle them?
 
 ### Architecture
 - What does the graph abstraction provide over raw API calls?

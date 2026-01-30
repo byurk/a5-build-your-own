@@ -9,7 +9,7 @@ In this activity, you'll create a polished demonstration of your application and
 Provide a **3-5 turn conversation** that showcases your application working well. This should demonstrate:
 - Your chosen application domain
 - Document retrieval (`search_docs`)
-- Your custom extension (node or tool)
+- Your custom tool
 
 ### Full Transcript
 
@@ -58,15 +58,15 @@ REPLACE_ME - What made your document collection valuable? How does grounding in 
 
 REPLACE_ME - If you started over, what application or documents might you choose? Why?
 
-### Extension Choice
+### Tool Choice
 
-**Why this extension?**
+**Why this tool?**
 
-REPLACE_ME - Reflect on why you chose this particular node/tool. Was it the right choice for your application?
+REPLACE_ME - Reflect on why you chose this particular tool. Was it the right choice for your application?
 
-**Node vs. Tool Decision**
+**Difficulty Level**
 
-REPLACE_ME - If you chose a node, would a tool have been better? If you chose a tool, was the added complexity worth it? What did you learn?
+REPLACE_ME - How difficult was your tool to implement safely? What was the hardest part (input validation, edge cases, error handling)?
 
 ### Prompt Engineering
 
@@ -82,15 +82,15 @@ REPLACE_ME - How did you decide what to put in the system prompt vs. tool descri
 
 ## Part 4: Technical Reflection
 
-### Graph Architecture
+### Tool Integration
+
+**How does your tool fit into the system?**
+
+REPLACE_ME - How did you add your tool to the graph? How does the LLM know when to call it?
 
 **What does the graph abstraction give you?**
 
-REPLACE_ME - How does LangGraph's node-and-edge model compare to making raw API calls? What are the benefits and drawbacks?
-
-**How did you modify the graph?**
-
-REPLACE_ME - Describe how your extension changed the graph structure (new node? new tool in TOOLS list? new edges?)
+REPLACE_ME - How does LangGraph's tool-calling pattern compare to making raw API calls? What are the benefits?
 
 ### Safety Considerations
 
