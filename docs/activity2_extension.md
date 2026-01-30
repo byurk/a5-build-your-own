@@ -10,7 +10,7 @@ In this activity, you'll extend the assistant by adding a new **tool** to `tools
 
 ### Tool Name
 
-**Name:** REPLACE_ME (e.g., `calculate_bmi`, `days_until`, `convert_temperature`)
+**Name:** REPLACE_ME (e.g., `day_of_week`, `roman_to_arabic`, `adjust_for_inflation`)
 
 ### Purpose
 
@@ -132,6 +132,29 @@ def base6_to_base7(number: str) -> str:
         digits.append(str(base10 % 7))
         base10 //= 7
     return "".join(reversed(digits))
+```
+
+Here's an example with a lookup table:
+
+```python
+@tool
+def birthstone(month: int) -> str:
+    """Get the traditional birthstone for a given month.
+
+    Args:
+        month: The month number (1 = January, 12 = December).
+
+    Returns:
+        The name of the birthstone, or an error message.
+    """
+    STONES = {
+        1: "Garnet", 2: "Amethyst", 3: "Aquamarine", 4: "Diamond",
+        5: "Emerald", 6: "Pearl", 7: "Ruby", 8: "Peridot",
+        9: "Sapphire", 10: "Opal", 11: "Topaz", 12: "Turquoise"
+    }
+    if month < 1 or month > 12:
+        return "Error: month must be 1-12"
+    return f"The birthstone for month {month} is {STONES[month]}"
 ```
 
 **Pattern 2: AST parsing (only for expression evaluators)**

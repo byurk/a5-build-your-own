@@ -122,71 +122,55 @@ Add an entry documenting your work this week.
 
 ## Example Application Ideas
 
-Your extension is a **new tool** in `tools.py`. The key is choosing a tool that naturally complements the information in your documents—something a user would want to calculate *after* learning something from the RAG system.
+Your extension is a **new tool** in `tools.py`. Choose a tool that:
 
-**Good fit:** User asks about recipes → RAG returns a recipe → User asks to convert the oven temperature from Fahrenheit to Celsius → Tool does the conversion.
+1. **Naturally complements your documents**—the tool should use information that appears in the documents
+2. **Adds value over the LLM alone**—the calculation should be something LLMs get wrong
 
-**Poor fit:** User asks about study techniques → RAG returns study guides → User asks... to check if it's time for a pomodoro break? The tool has nothing to do with the document content.
+**Good fit:** User reads about the Declaration of Independence → RAG returns historical article with the date July 4, 1776 → User asks "What day of the week was that?" → Tool calculates Thursday using Zeller's formula.
 
-### 1. Cooking Assistant
-- **Tool:** `convert_cooking_temp(fahrenheit)` - converts F to C for oven temperatures
-- **Example flow:** User finds a recipe, recipe says "bake at 375°F", user asks for Celsius
-- **Documents:** Recipes, cooking technique guides
-- **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/bookshelf/419)
+**Poor fit:** User reads classic novels → RAG returns literary content → Tool calculates reading time from word count. Reading time is book-related, but users asking about literature in a way that is supported by the RAG system want to understand themes, characters, and meaning—not how long it takes to read.
 
-### 2. Recipe Scaler
-- **Tool:** `scale_ingredient(original_amount, original_servings, desired_servings)` - scales recipe quantities
-- **Example flow:** User finds a recipe that serves 4, wants to make it for 6 people
-- **Documents:** Recipes, cooking guides
-- **Source:** [Project Gutenberg Cookbooks](https://www.gutenberg.org/ebooks/bookshelf/419)
+**Why tools beat LLMs for certain tasks:**
+- **Date arithmetic** - Leap years, month lengths, day-of-week calculations are error-prone
+- **Complex parsing** - Roman numerals with subtractive notation (IV, IX, XL)
+- **Lookup + calculation** - Inflation adjustment requires CPI tables
+- **Fractional exponents** - Growth rate formulas like (final/initial)^(1/years) often go wrong
 
-### 3. Historical Events Guide
-- **Tool:** `years_between(year1, year2)` - calculate years between events
-- **Example flow:** User reads about two historical events, asks "how many years between the signing of the Declaration and the end of the Civil War?"
+### 1. Historical Events Guide
+- **Tool:** `day_of_week(year, month, day)` - returns the weekday for any historical date
+- **Why non-trivial?** Zeller's formula is non-trivial; LLMs frequently get day-of-week wrong for historical dates.
+- **Example flow:** User reads about the Declaration of Independence (July 4, 1776), asks "What day of the week was that?"
 - **Documents:** Historical articles, timelines, primary sources
 - **Source:** [Library of Congress](https://www.loc.gov/collections/), Wikipedia articles (copy to .txt)
 
-### 4. Nutrition Assistant
-- **Tool:** `calculate_calories(protein_g, carbs_g, fat_g)` - compute total calories from macros
-- **Example flow:** User asks about a food, RAG returns nutrition info with macros, user wants total calories
-- **Documents:** Nutrition guides, food composition data
-- **Source:** [USDA FoodData Central](https://fdc.nal.usda.gov/)
+### 2. Biography Helper
+- **Tool:** `age_at_event(birth_year, birth_month, birth_day, event_year, event_month, event_day)` - exact age in years
+- **Why non-trivial?** Date arithmetic with leap years and month boundaries. LLMs are often off by a year.
+- **Example flow:** User reads Lincoln's biography (born Feb 12, 1809), asks "How old was he at inauguration (March 4, 1861)?"
+- **Documents:** Biographies, historical timelines
+- **Source:** [Library of Congress](https://www.loc.gov/collections/), Wikipedia biographies (copy to .txt)
 
-### 5. Personal Finance Guide
-- **Tool:** `calculate_loan_payment(principal, annual_rate, years)` - compute monthly payment
-- **Example flow:** User reads about mortgages, docs mention typical rates, user calculates payment for their situation
-- **Documents:** Financial literacy guides, loan explanations
-- **Source:** [Investor.gov](https://www.investor.gov/)
+### 3. Classical History Guide
+- **Tool:** `roman_to_arabic(numeral)` - convert Roman numerals to integers
+- **Why non-trivial?** Subtractive notation (IV=4, IX=9, XL=40, CM=900) requires parsing logic, not just symbol lookup.
+- **Example flow:** User reads about Roman history, doc mentions "MDCCLXXVI", user asks "What year is that?"
+- **Documents:** Classical history texts, architectural guides, museum references
+- **Source:** [Library of Congress](https://www.loc.gov/collections/), Wikipedia articles on Roman history (copy to .txt)
 
-### 6. Science Textbook Helper
-- **Tool:** `convert_units(value, from_unit, to_unit)` - convert between units (limited set)
-- **Example flow:** User reads physics explanation with metric units, wants imperial conversion
-- **Documents:** Textbook chapters, science explanations
-- **Source:** [OpenStax Physics](https://openstax.org/details/books/college-physics-2e), [OpenStax Chemistry](https://openstax.org/details/books/chemistry-2e)
+### 4. Historical Economics Guide
+- **Tool:** `adjust_for_inflation(amount, from_year, to_year)` - convert historical prices to modern dollars
+- **Why non-trivial?** Requires CPI lookup table plus calculation. LLMs give vague estimates; this gives accurate values.
+- **Example flow:** User reads "Model T cost $825 in 1908" and asks "What would that be today?" Tool calculates ~$27,000.
+- **Documents:** Historical texts, biographies, old newspapers, economic history
+- **Source:** [Project Gutenberg](https://www.gutenberg.org/) historical texts, [FRASER Economic History](https://fraser.stlouisfed.org/)
 
-### 7. Gardening Planner
-- **Tool:** `days_until_harvest(planting_date, days_to_maturity)` - calculate expected harvest date
-- **Example flow:** User asks about growing tomatoes, docs say "70 days to maturity", user asks when to expect harvest if planted June 1
-- **Documents:** Planting guides, seed catalogs, gardening tips
-- **Source:** [USDA Plant Hardiness](https://planthardiness.ars.usda.gov/), seed company guides (copy to .txt)
-
-### 8. Running/Fitness Coach
-- **Tool:** `calculate_pace(distance_km, time_minutes)` - compute pace in min/km
-- **Example flow:** User asks about training plans, docs explain pace zones, user calculates their pace from a recent run
-- **Documents:** Running guides, training plans
-- **Source:** [CDC Physical Activity](https://www.cdc.gov/physical-activity/), running blogs (copy to .txt)
-
-### 9. Board Game Rules Helper
-- **Tool:** `roll_dice(num_dice, num_sides)` - simulate dice rolls
-- **Example flow:** User asks about game mechanics, docs explain "roll 2d6 for damage", user wants to simulate a roll
-- **Documents:** Game rulebooks, strategy guides
-- **Source:** Your own rulebooks (copy rules sections to .txt)
-
-### 10. Travel Budget Helper
-- **Tool:** `convert_currency(amount, exchange_rate)` - convert to local currency
-- **Example flow:** User asks about destination, docs mention prices in local currency, user converts to their currency
-- **Documents:** Travel guides, destination information
-- **Source:** [Wikivoyage](https://www.wikivoyage.org/), [National Park Service](https://www.nps.gov/)
+### 5. Historical Data Analysis
+- **Tool:** `growth_rate(initial_value, final_value, years)` - calculates average annual growth rate (CAGR)
+- **Why non-trivial?** Formula: rate = (final/initial)^(1/years) - 1. The fractional exponent trips up LLMs.
+- **Example flow:** User reads "US population was 5.3 million in 1800 and 76 million in 1900" and asks "What was the annual growth rate?" Tool calculates ~2.7% per year.
+- **Documents:** Economic history, demographic texts, business histories, development reports
+- **Source:** [FRASER Economic History](https://fraser.stlouisfed.org/), [Our World in Data](https://ourworldindata.org/), historical statistics
 
 ---
 
